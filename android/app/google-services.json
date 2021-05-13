@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "579192467514",
+    "firebase_url": "https://tfg-quickstart-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tfg-quickstart",
+    "storage_bucket": "tfg-quickstart.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:579192467514:android:00da1db97e0b1ab918c503",
+        "android_client_info": {
+          "package_name": "com.enrjorarr.quick_stats"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "579192467514-csqrt1rgtsnpb6k1sm2jpot8if1i04b9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.enrjorarr.quick_stats",
+            "certificate_hash": "b4775e66c8d720c08af86602a9527b99911a84f3"
+          }
+        },
+        {
+          "client_id": "579192467514-scml2st30pplikq45pce2ciqc49hnccn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvOTjAWXXEPZxcvWZh_dh_uhyNog5CCbI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "579192467514-scml2st30pplikq45pce2ciqc49hnccn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
