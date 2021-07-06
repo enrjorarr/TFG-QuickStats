@@ -1,13 +1,19 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:quick_stats/src/models/organization.dart';
+import 'package:quick_stats/src/pages/menu/organization/organization.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationPage extends StatelessWidget {
+class OrganizationGamesPage extends StatelessWidget {
+  final String organization;
+
+  const OrganizationGamesPage({Key key, this.organization}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getOrganizations(),
+        future: getMatches(organization),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {

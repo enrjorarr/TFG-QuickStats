@@ -1,13 +1,13 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/pages/menu/favorite_page.dart';
 import 'package:quick_stats/src/pages/menu/match_page.dart';
 import 'package:quick_stats/src/pages/menu/organization_page.dart';
-import 'package:quick_stats/src/pages/menu/profile_page.dart';
 import 'package:quick_stats/src/pages/menu/search_page.dart';
+
+import 'menu/profile_page.dart';
 
 class MenuPage extends StatefulWidget {
   @override

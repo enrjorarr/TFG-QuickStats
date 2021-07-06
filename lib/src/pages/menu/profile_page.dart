@@ -47,17 +47,9 @@ class ProfilePage extends StatelessWidget {
                 style: KLargeTextStyle,
               ),
               SizedBox(height: 40),
-              Text(
-                'Código de usuario',
-                style: KTitleTextStyle,
-              ),
-              SizedBox(height: 10),
-              Text(
-                user.uid,
-                style: KLargeTextStyle,
-              ),
-              SizedBox(height: 40),
-              _crearBoton(context)
+              _crearBotonPeticiones(context),
+              SizedBox(height: 60),
+              _crearBotonLogout(context)
             ],
           ),
         ),
@@ -65,8 +57,37 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  //Petición - Botón de peticiones
+  Widget _crearBotonPeticiones(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return ElevatedButton(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: size.width * 0.1, vertical: size.height * 0.015),
+          child: Text(
+            'PETICIONES',
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          elevation: 14.0,
+          textStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            fontFamily: 'Sen',
+            color: Colors.white,
+          ),
+          primary: Colors.deepOrange,
+        ),
+        onPressed: () {
+          Navigator.of(context).pushNamed('requests');
+        });
+  }
+
   //Login - Botón de login
-  Widget _crearBoton(BuildContext context) {
+  Widget _crearBotonLogout(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return ElevatedButton(

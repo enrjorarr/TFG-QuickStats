@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quick_stats/src/auth/Authenticate.dart';
 import 'package:quick_stats/src/auth/authenticationProvider.dart';
 import 'package:quick_stats/src/pages/home_page.dart';
+import 'package:quick_stats/src/pages/menu/organization/organization.dart';
+import 'package:quick_stats/src/pages/menu/profile/requests.dart';
 import 'package:quick_stats/src/pages/prueba_login.dart';
 
 Future<void> main() async {
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
         routes: {
           'pruebaLogin': (BuildContext context) => PruebaLoginPage(),
           'home': (BuildContext context) => HomePage(),
+          'requests': (BuildContext context) => RequestsPage(),
+          'OrganizationGames': (BuildContext context) => OrganizationPage(),
         },
         theme: ThemeData(primaryColor: Colors.deepOrange, fontFamily: 'Sen'),
       ),
