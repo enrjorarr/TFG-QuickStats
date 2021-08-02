@@ -1,7 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_stats/src/models/organization.dart';
-import 'package:quick_stats/src/pages/menu/organization/organization.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
 class OrganizationGamesPage extends StatelessWidget {

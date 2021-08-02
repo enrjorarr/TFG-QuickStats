@@ -15,11 +15,6 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  //Firebase
-  // final referenceDatabase = FirebaseDatabase.instance
-  //     .reference()
-  //     .child("Organizations")
-  //     .child('hola');
   final User user = FirebaseAuth.instance.currentUser;
 
   // Variables

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/pages/menu/organization/organization_games.dart';
 
-import 'organization_teams.dart';
-import 'organization_users.dart';
+import 'Teams/organization_teams.dart';
+import 'Users/organization_users.dart';
 
 String page = "Equipos";
 int index = 1;
@@ -18,13 +18,16 @@ class _OrganizationPageState extends State<OrganizationPage> {
     final Map<String, Object> rcvdData =
         ModalRoute.of(context).settings.arguments;
 
+    String org = rcvdData['organization'];
+    bool owner = rcvdData['owner'];
+
     final _controller = PageController(
       initialPage: index,
     );
-    String org = rcvdData['organization'];
 
     _controller.addListener(() {
       index = _controller.page.toInt();
+
       setState(() {
         if (index == 0)
           page = "Partidos";
@@ -39,6 +42,21 @@ class _OrganizationPageState extends State<OrganizationPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(page),
+        actions: [
+          if (owner && page == "Equipos")
+            IconButton(
+              icon: Icon(Icons.group_add),
+              onPressed: () {},
+            )
+          else if (owner && page == "Usuarios")
+            IconButton(
+              icon: Icon(Icons.group_add),
+              onPressed: () {
+                Navigator.pushNamed(context, "OrganizationInviteUsers",
+                    arguments: {"organization": org});
+              },
+            )
+        ],
       ),
       body: PageView(
         controller: _controller,

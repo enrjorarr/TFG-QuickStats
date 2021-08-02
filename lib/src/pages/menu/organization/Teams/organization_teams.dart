@@ -1,19 +1,16 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_stats/src/models/organization.dart';
-import 'package:quick_stats/src/pages/menu/organization/organization.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationUsersPage extends StatelessWidget {
+class OrganizationTeamsPage extends StatelessWidget {
   final String organization;
 
-  const OrganizationUsersPage({Key key, this.organization}) : super(key: key);
-
+  const OrganizationTeamsPage({Key key, this.organization}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getEmails(organization),
+        future: getTeams(organization),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -27,10 +24,10 @@ class OrganizationUsersPage extends StatelessWidget {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  final organization = snapshot.data[index];
+                  final team = snapshot.data[index];
                   return FadeInRight(
                     delay: Duration(milliseconds: 100 * index),
-                    child: listaOrganizaciones(context, organization),
+                    child: listaTeams(context, team),
                   );
                 },
               );
@@ -49,7 +46,7 @@ class OrganizationUsersPage extends StatelessWidget {
     );
   }
 
-  Widget listaOrganizaciones(BuildContext context, String organization) {
+  Widget listaTeams(BuildContext context, String team) {
     return Card(
       elevation: 5.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -66,7 +63,7 @@ class OrganizationUsersPage extends StatelessWidget {
               child: Icon(Icons.people, color: Colors.white),
             ),
             title: Text(
-              organization,
+              team,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -75,17 +72,8 @@ class OrganizationUsersPage extends StatelessWidget {
             trailing: Icon(Icons.keyboard_arrow_right,
                 color: Colors.white, size: 30.0),
             onTap: () {
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => OrganizationGamesPage(
-              //         organization: organization,
-              //       ),
-              //     ));
-              Navigator.pushNamed(context, "OrganizationGames",
-                  arguments: {"organization": organization});
-
-              // Navigator.of(context).pushNamed('OrganizationGames');
+              Navigator.pushNamed(context, "OrganizationEditTeamPage",
+                  arguments: {"team": team});
             },
           )),
     );

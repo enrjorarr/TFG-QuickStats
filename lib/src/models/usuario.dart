@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:quick_stats/src/models/organization.dart';
 
 class Usuario {
   Usuario({this.nombre, this.email, this.usuario});

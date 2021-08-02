@@ -2,9 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'package:quick_stats/src/auth/authenticationProvider.dart';
 import 'package:quick_stats/src/requests/profile_request.dart';
 
 const KLargeTextStyle =

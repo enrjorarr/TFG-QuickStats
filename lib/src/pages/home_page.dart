@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:quick_stats/src/auth/authenticationProvider.dart';
-import 'package:quick_stats/src/models/organization.dart';
 import 'package:quick_stats/src/models/usuario.dart';
 
 class HomePage extends StatelessWidget {

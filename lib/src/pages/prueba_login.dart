@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:quick_stats/src/auth/auth.dart';
 import 'package:quick_stats/src/auth/authenticationProvider.dart';
 
 //Página de login

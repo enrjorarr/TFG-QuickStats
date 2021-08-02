@@ -2,12 +2,15 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationPage extends StatelessWidget {
+class OrganizationEditTeamPage extends StatelessWidget {
+  final String team;
+
+  const OrganizationEditTeamPage({Key key, this.team}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getOrganizations(),
+        future: getPlayers(team),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -21,10 +24,10 @@ class OrganizationPage extends StatelessWidget {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  final organization = snapshot.data[index];
+                  final team = snapshot.data[index];
                   return FadeInRight(
                     delay: Duration(milliseconds: 100 * index),
-                    child: listaOrganizaciones(context, organization),
+                    child: listaTeams(context, team),
                   );
                 },
               );
@@ -43,7 +46,7 @@ class OrganizationPage extends StatelessWidget {
     );
   }
 
-  Widget listaOrganizaciones(BuildContext context, String organization) {
+  Widget listaTeams(BuildContext context, String team) {
     return Card(
       elevation: 5.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -60,7 +63,7 @@ class OrganizationPage extends StatelessWidget {
               child: Icon(Icons.people, color: Colors.white),
             ),
             title: Text(
-              organization,
+              team,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -68,11 +71,7 @@ class OrganizationPage extends StatelessWidget {
             ),
             trailing: Icon(Icons.keyboard_arrow_right,
                 color: Colors.white, size: 30.0),
-            onTap: () async {
-              bool owner = await getOwner(organization);
-              Navigator.pushNamed(context, "OrganizationGames",
-                  arguments: {"organization": organization, "owner": owner});
-            },
+            onTap: () {},
           )),
     );
   }

@@ -2,15 +2,16 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationTeamsPage extends StatelessWidget {
+class OrganizationUsersPage extends StatelessWidget {
   final String organization;
 
-  const OrganizationTeamsPage({Key key, this.organization}) : super(key: key);
+  const OrganizationUsersPage({Key key, this.organization}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getTeams(organization),
+        future: getEmails(organization),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -24,10 +25,10 @@ class OrganizationTeamsPage extends StatelessWidget {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  final team = snapshot.data[index];
+                  final organization = snapshot.data[index];
                   return FadeInRight(
                     delay: Duration(milliseconds: 100 * index),
-                    child: listaTeams(context, team),
+                    child: listaOrganizaciones(context, organization),
                   );
                 },
               );
@@ -46,7 +47,7 @@ class OrganizationTeamsPage extends StatelessWidget {
     );
   }
 
-  Widget listaTeams(BuildContext context, String organization) {
+  Widget listaOrganizaciones(BuildContext context, String organization) {
     return Card(
       elevation: 5.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -71,7 +72,19 @@ class OrganizationTeamsPage extends StatelessWidget {
             ),
             trailing: Icon(Icons.keyboard_arrow_right,
                 color: Colors.white, size: 30.0),
-            onTap: () {},
+            onTap: () {
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => OrganizationGamesPage(
+              //         organization: organization,
+              //       ),
+              //     ));
+              Navigator.pushNamed(context, "OrganizationGames",
+                  arguments: {"organization": organization});
+
+              // Navigator.of(context).pushNamed('OrganizationGames');
+            },
           )),
     );
   }

@@ -32,6 +32,13 @@ Future<void> acceptOrganizations(String organization) async {
       .child('ParticipatingOrganizations')
       .child(organization)
       .set(true);
+
+  await referenceDatabase
+      .child('Organizations')
+      .child(organization)
+      .child('Users')
+      .child(user.uid)
+      .set(true);
 }
 
 Future<void> rejectOrganizations(String organization) async {

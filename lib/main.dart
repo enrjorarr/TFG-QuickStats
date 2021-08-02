@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quick_stats/src/auth/Authenticate.dart';
 import 'package:quick_stats/src/auth/authenticationProvider.dart';
 import 'package:quick_stats/src/pages/home_page.dart';
+import 'package:quick_stats/src/pages/menu/organization/Teams/edit_teams.dart';
+import 'package:quick_stats/src/pages/menu/organization/Users/invite_users.dart';
 import 'package:quick_stats/src/pages/menu/organization/organization.dart';
 import 'package:quick_stats/src/pages/menu/profile/requests.dart';
 import 'package:quick_stats/src/pages/prueba_login.dart';
@@ -37,6 +39,10 @@ class MyApp extends StatelessWidget {
           'home': (BuildContext context) => HomePage(),
           'requests': (BuildContext context) => RequestsPage(),
           'OrganizationGames': (BuildContext context) => OrganizationPage(),
+          'OrganizationEditTeamPage': (BuildContext context) =>
+              OrganizationEditTeamPage(),
+          'OrganizationInviteUsers': (BuildContext context) =>
+              OrganizationInviteUsersPage(),
         },
         theme: ThemeData(primaryColor: Colors.deepOrange, fontFamily: 'Sen'),
       ),
