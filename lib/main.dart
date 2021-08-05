@@ -8,7 +8,9 @@ import 'package:quick_stats/src/pages/home_page.dart';
 import 'package:quick_stats/src/pages/menu/organization/Teams/edit_teams.dart';
 import 'package:quick_stats/src/pages/menu/organization/Users/invite_users.dart';
 import 'package:quick_stats/src/pages/menu/organization/organization.dart';
+import 'package:quick_stats/src/pages/menu/organization/organization_create.dart';
 import 'package:quick_stats/src/pages/menu/profile/requests.dart';
+import 'package:quick_stats/src/pages/menu_page.dart';
 import 'package:quick_stats/src/pages/prueba_login.dart';
 
 Future<void> main() async {
@@ -37,12 +39,15 @@ class MyApp extends StatelessWidget {
         routes: {
           'pruebaLogin': (BuildContext context) => PruebaLoginPage(),
           'home': (BuildContext context) => HomePage(),
+          'Menu': (BuildContext context) => MenuPage(),
           'requests': (BuildContext context) => RequestsPage(),
           'OrganizationGames': (BuildContext context) => OrganizationPage(),
           'OrganizationEditTeamPage': (BuildContext context) =>
               OrganizationEditTeamPage(),
           'OrganizationInviteUsers': (BuildContext context) =>
               OrganizationInviteUsersPage(),
+          'OrganizationCreate': (BuildContext context) =>
+              OrganizationCreatePage(),
         },
         theme: ThemeData(primaryColor: Colors.deepOrange, fontFamily: 'Sen'),
       ),

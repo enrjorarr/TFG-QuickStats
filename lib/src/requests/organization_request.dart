@@ -32,7 +32,6 @@ Future<List<Organization>> getOrganization() async {
           .child(org)
           .once()
           .then((DataSnapshot snapshot) {
-        print(snapshot.value);
         Map<dynamic, dynamic> values = snapshot.value;
 
         organizations.add(Organization.fromJson(values));
@@ -43,6 +42,54 @@ Future<List<Organization>> getOrganization() async {
   }
 
   return organizations;
+}
+
+Future<List<String>> getAllOrganizationNames() async {
+  List<String> organizations = [];
+
+  try {
+    await referenceDatabase
+        .child('Organizations')
+        .once()
+        .then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        organizations.add(key);
+      });
+    });
+  } catch (e) {
+    print(e);
+  }
+  return organizations;
+}
+
+Future<bool> addOrganization(String org) async {
+  bool checkOrganization = false;
+  try {
+    await referenceDatabase
+        .child('Organizations')
+        .child(org)
+        .child('owner')
+        .set(user.uid);
+
+    await referenceDatabase
+        .child('Organizations')
+        .child(org)
+        .child('Users')
+        .child(user.uid)
+        .set(true);
+
+    await referenceDatabase
+        .child('Users')
+        .child(user.uid)
+        .child('ParticipatingOrganizations')
+        .child(org)
+        .set(true);
+    checkOrganization = true;
+  } catch (e) {
+    print(e);
+  }
+  return checkOrganization;
 }
 
 Future<List<String>> getTeams(String org) async {

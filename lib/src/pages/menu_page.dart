@@ -38,7 +38,9 @@ class _MenuPageState extends State<MenuPage> {
           if (titulo == "Organization")
             IconButton(
               icon: Icon(Icons.group_add),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, "OrganizationCreate");
+              },
             )
         ],
       ),

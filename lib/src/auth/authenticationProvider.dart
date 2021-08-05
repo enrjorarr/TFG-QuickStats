@@ -42,6 +42,11 @@ class AuthenticationProvider {
         });
       }
 
+      await referenceDatabase
+          .child('Email_UserID')
+          .child(user.uid)
+          .set(user.email.toString());
+
       return user;
     } catch (e) {
       print(e);
