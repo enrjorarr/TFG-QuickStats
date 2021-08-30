@@ -1,74 +1,116 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_stats/src/models/organization.dart';
-import 'package:quick_stats/src/requests/organization_request.dart';
+import 'package:quick_stats/src/requests/match_request.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  String? _chosenValue;
+
+  List<String> partidos = [];
+
+  @override
+  void initState() {
+    super.initState();
+    asyncMethod().then((value) {
+      partidos = value;
+
+      setState(() {});
+    });
+  }
+
+  Future<List<String>> asyncMethod() async {
+    var resultado = await getLiveMatches();
+    return resultado;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: getOrganization(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.deepOrange),
-                  backgroundColor: Colors.white,
-                ),
-              );
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  final organization = snapshot.data[index];
-                  return FadeInRight(
-                    delay: Duration(milliseconds: 100 * index),
-                    child: listaOrganizaciones(organization),
-                  );
-                },
-              );
-            }
-          } else if (snapshot.hasError) {
-            Text('No data');
-          }
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.deepOrange),
-              backgroundColor: Colors.orange,
+      body: _crearBotonPeticiones(context),
+    );
+  }
+
+  Widget _crearBotonPeticiones(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Container(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 30,
+          ),
+          Center(
+            child: DropdownButton<String>(
+              value: _chosenValue,
+              //elevation: 5,
+              style: TextStyle(color: Colors.black),
+
+              items: partidos.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              hint: Text(
+                "Seleccione un partido",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600),
+              ),
+              onChanged: (String? value) {
+                setState(() {
+                  _chosenValue = value;
+                });
+              },
             ),
-          );
-        },
+          ),
+          _botonCrear(context)
+        ],
       ),
     );
   }
 
-  Widget listaOrganizaciones(Organization organization) {
-    return ListTile(
-      title: Text(
-        organization.name,
-        style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
-      ),
-    );
+  Widget _botonCrear(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return ElevatedButton(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: size.width * 0.1, vertical: size.height * 0.015),
+          child: Text(
+            'Ver partido',
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          elevation: 14.0,
+          textStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            fontFamily: 'Sen',
+            color: Colors.white,
+          ),
+          primary: Colors.deepOrange,
+        ),
+        onPressed: () async {
+          if (_chosenValue != null) {
+            Navigator.pushNamed(context, "SpectatorPage",
+                arguments: {"match": _chosenValue});
+          } else {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(
+                  'Seleccione un partido',
+                  textAlign: TextAlign.center,
+                ),
+              ));
+          }
+        });
   }
 }
-
-// class _ListaOrganizaciones extends StatelessWidget {
-//   final List<Organization> organizations;
-
-//   _ListaOrganizaciones(this.organizations);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListView.builder(
-//       itemCount: organizations.length,
-//       itemBuilder: (context, index) {
-//         final organization = organizations[index];
-//         return ListTile(
-//           title: Text(organization.name),
-//         );
-//       },
-//     );
-//   }
-// }

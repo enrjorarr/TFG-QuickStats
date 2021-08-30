@@ -32,8 +32,8 @@ class _OrganizationInviteUsersPageState
   @override
   Widget build(BuildContext context) {
     final Map<String, Object> rcvdData =
-        ModalRoute.of(context).settings.arguments;
-    String org = rcvdData['organization'];
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
+    String? org = rcvdData['organization'] as String?;
 
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +87,7 @@ class _OrganizationInviteUsersPageState
     );
   }
 
-  Widget _botonBuscar(BuildContext context, String org) {
+  Widget _botonBuscar(BuildContext context, String? org) {
     final size = MediaQuery.of(context).size;
 
     return ElevatedButton(
@@ -111,11 +111,11 @@ class _OrganizationInviteUsersPageState
           primary: Colors.deepOrange,
         ),
         onPressed: () async {
-          final form = formKey.currentState;
+          final form = formKey.currentState!;
           showCard = false;
 
           if (form.validate()) {
-            List<String> usuariosOrg = await getEmails(org);
+            List<String?> usuariosOrg = await getEmails(org!);
             List<String> usuariosTodos = await getAllEmails();
 
             var set1 = Set.from(usuariosOrg);
@@ -169,7 +169,7 @@ class _OrganizationInviteUsersPageState
     );
   }
 
-  Widget _botonInvitar(BuildContext context, String org) {
+  Widget _botonInvitar(BuildContext context, String? org) {
     final size = MediaQuery.of(context).size;
 
     return ElevatedButton(
@@ -193,10 +193,10 @@ class _OrganizationInviteUsersPageState
           primary: Colors.deepOrange,
         ),
         onPressed: () async {
-          final form = formKey.currentState;
+          final form = formKey.currentState!;
 
           if (form.validate()) {
-            if (await inviteUser(emailController.text, org)) {
+            if (await inviteUser(emailController.text, org!)) {
               ScaffoldMessenger.of(context)
                 ..removeCurrentSnackBar()
                 ..showSnackBar(SnackBar(

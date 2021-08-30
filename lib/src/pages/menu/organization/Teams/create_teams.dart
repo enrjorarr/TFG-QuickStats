@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationCreatePage extends StatefulWidget {
+class TeamCreatePage extends StatefulWidget {
   @override
-  _OrganizationCreatePageState createState() => _OrganizationCreatePageState();
+  _TeamCreatePageState createState() => _TeamCreatePageState();
 }
 
-class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
-  final organizationController = TextEditingController();
+class _TeamCreatePageState extends State<TeamCreatePage> {
+  final teamController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
-    organizationController.addListener(onListen);
+    teamController.addListener(onListen);
     super.initState();
   }
 
   @override
   void dispose() {
-    organizationController.dispose();
+    teamController.dispose();
 
     super.dispose();
   }
@@ -27,17 +27,21 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
 
   @override
   Widget build(BuildContext context) {
+    final rcvdData = ModalRoute.of(context)!.settings.arguments as Map;
+
+    String? org = rcvdData['organization'] as String?;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Crear organización'),
+        title: Text('Crear equipo'),
       ),
       body: Form(
           key: formKey,
           child: Column(
             children: [
-              _organizationFieldWidget(context),
-              _botonCrear(context),
+              _teamFieldWidget(context),
+              _botonCrear(context, org)
 
               // buildNoAccount(),
             ],
@@ -45,27 +49,27 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
     );
   }
 
-  Widget _organizationFieldWidget(BuildContext context) {
+  Widget _teamFieldWidget(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
       padding: EdgeInsets.fromLTRB(size.width * 0.1, size.height * 0.10,
           size.width * 0.1, size.height * 0.05),
       child: TextFormField(
-          controller: organizationController,
-          maxLength: 80,
+          controller: teamController,
+          maxLength: 30,
           decoration: InputDecoration(
-            hintText: 'Nombre de la organización',
+            hintText: 'Nombre del equipo',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
             ),
             prefixIcon: Icon(Icons.people),
-            suffixIcon: organizationController.text.isEmpty
+            suffixIcon: teamController.text.isEmpty
                 ? Container(width: 0)
                 : IconButton(
                     icon: Icon(Icons.close),
                     onPressed: () {
                       setState(() {
-                        organizationController.clear();
+                        teamController.clear();
                       });
                     },
                   ),
@@ -73,19 +77,19 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
           keyboardType: TextInputType.text,
           validator: (value) {
             if (value!.isEmpty)
-              return 'El nombre de la organización está vacío';
-            else if (value.length > 80)
-              return 'El nombre de la organización es demasiado largo';
+              return 'El nombre del equipo está vacío';
+            else if (value.length > 30)
+              return 'El nombre del equipo es demasiado largo';
             else if (value
                 .contains(RegExp(r'[^a-zA-ZáéíóúÁÉÍÓÚ\s\u00f1\u00d1]')))
-              return 'El nombre de la organización no es válido';
+              return 'El nombre del equipo no es válido';
             else
               return null;
           }),
     );
   }
 
-  Widget _botonCrear(BuildContext context) {
+  Widget _botonCrear(BuildContext context, String? org) {
     final size = MediaQuery.of(context).size;
 
     return ElevatedButton(
@@ -93,7 +97,7 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
           padding: EdgeInsets.symmetric(
               horizontal: size.width * 0.1, vertical: size.height * 0.015),
           child: Text(
-            'Crear organización',
+            'Crear equipo',
           ),
         ),
         style: ElevatedButton.styleFrom(
@@ -110,17 +114,17 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
         ),
         onPressed: () async {
           final form = formKey.currentState!;
-          List<String> organizationNames = [];
+          List<String> teamNames = [];
 
           if (form.validate()) {
-            organizationNames = await getAllOrganizationNames();
-            if (!organizationNames.contains(organizationController.text)) {
-              if (await addOrganization(organizationController.text)) {
+            teamNames = await getAllTeamNames();
+            if (!teamNames.contains(teamController.text)) {
+              if (await addTeam(teamController.text, org!)) {
                 ScaffoldMessenger.of(context)
                   ..removeCurrentSnackBar()
                   ..showSnackBar(SnackBar(
                     content: Text(
-                      'La organización se ha creado correctamente',
+                      'El equipo se ha creado correctamente',
                       textAlign: TextAlign.center,
                     ),
                   ));
@@ -132,7 +136,7 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
                   ..removeCurrentSnackBar()
                   ..showSnackBar(SnackBar(
                     content: Text(
-                      'Ha ocurrido un error al crear la organización',
+                      'Ha ocurrido un error al crear el equipo',
                       textAlign: TextAlign.center,
                     ),
                   ));
@@ -142,7 +146,7 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
                 ..removeCurrentSnackBar()
                 ..showSnackBar(SnackBar(
                   content: Text(
-                    'Ya existe una organización con este nombre',
+                    'Ya existe un equipo con este nombre',
                     textAlign: TextAlign.center,
                   ),
                 ));

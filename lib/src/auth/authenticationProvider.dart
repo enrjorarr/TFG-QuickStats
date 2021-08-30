@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,45 +14,48 @@ class AuthenticationProvider {
 //Constructor to initialize the Firebase Auth instance.
 
   //Using Stream to listen to Authentication State
-  Stream<User> get authState => firebaseAuth.idTokenChanges();
+  Stream<User?> get authState => firebaseAuth.idTokenChanges();
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
   final referenceDatabase = FirebaseDatabase.instance.reference();
 
-  Future<User> singInWithGoogle() async {
+  Future<User?> singInWithGoogle() async {
     try {
-      final GoogleSignInAccount googleUser = await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAccount? googleUser = await (googleSignIn.signIn());
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
-      final GoogleAuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+        final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken) as GoogleAuthCredential;
 
-      final UserCredential userCredential =
-          await firebaseAuth.signInWithCredential(credential);
+        final UserCredential userCredential =
+            await firebaseAuth.signInWithCredential(credential);
 
-      final User user = userCredential.user;
+        final User user = userCredential.user!;
 
-      //Creamos el usuario al logearnos en la base de datos
+        //Creamos el usuario al logearnos en la base de datos
 
-      if (!await rootFirebaseIsExist(
-          referenceDatabase.child('Users').child(user.uid))) {
-        referenceDatabase.child('Users').child(user.uid).set({
-          'nombre': user.displayName.toString(),
-          'email': user.email.toString()
-        });
+        if (!await rootFirebaseIsExist(
+            referenceDatabase.child('Users').child(user.uid))) {
+          referenceDatabase.child('Users').child(user.uid).set({
+            'nombre': user.displayName.toString(),
+            'email': user.email.toString()
+          });
+        }
+
+        await referenceDatabase
+            .child('Email_UserID')
+            .child(user.uid)
+            .set(user.email.toString());
+
+        return user;
       }
-
-      await referenceDatabase
-          .child('Email_UserID')
-          .child(user.uid)
-          .set(user.email.toString());
-
-      return user;
     } catch (e) {
       print(e);
-      return e;
+      return null;
     }
   }
 

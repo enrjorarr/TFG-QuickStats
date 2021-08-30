@@ -16,17 +16,17 @@ class _OrganizationPageState extends State<OrganizationPage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, Object> rcvdData =
-        ModalRoute.of(context).settings.arguments;
+        ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
 
-    String org = rcvdData['organization'];
-    bool owner = rcvdData['owner'];
+    String? org = rcvdData['organization'] as String?;
+    bool owner = rcvdData['owner'] as bool;
 
     final _controller = PageController(
       initialPage: index,
     );
 
     _controller.addListener(() {
-      index = _controller.page.toInt();
+      index = _controller.page!.toInt();
 
       setState(() {
         if (index == 0)
@@ -46,14 +46,19 @@ class _OrganizationPageState extends State<OrganizationPage> {
           if (owner && page == "Equipos")
             IconButton(
               icon: Icon(Icons.group_add),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, "TeamCreate",
+                        arguments: {"organization": org})
+                    .then((value) => setState(() {}));
+              },
             )
           else if (owner && page == "Usuarios")
             IconButton(
               icon: Icon(Icons.group_add),
               onPressed: () {
                 Navigator.pushNamed(context, "OrganizationInviteUsers",
-                    arguments: {"organization": org});
+                        arguments: {"organization": org})
+                    .then((value) => setState(() {}));
               },
             )
         ],

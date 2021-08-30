@@ -8,7 +8,7 @@ class Authenticate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Instance to know the authentication state.
-    final firebaseUser = context.watch<User>();
+    final firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
       //Means that the user is logged in already and hence navigate to HomePage

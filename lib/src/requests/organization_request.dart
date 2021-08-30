@@ -3,14 +3,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:quick_stats/src/models/organization.dart';
 
 final referenceDatabase = FirebaseDatabase.instance.reference();
-final User user = FirebaseAuth.instance.currentUser;
+final User? user = FirebaseAuth.instance.currentUser;
 
 Future<List<String>> getOrganizations() async {
   List<String> organizationNames = [];
 
   await referenceDatabase
       .child('Users')
-      .child(user.uid)
+      .child(user!.uid)
       .child('ParticipatingOrganizations')
       .once()
       .then((DataSnapshot snapshot) {
@@ -70,18 +70,18 @@ Future<bool> addOrganization(String org) async {
         .child('Organizations')
         .child(org)
         .child('owner')
-        .set(user.uid);
+        .set(user!.uid);
 
     await referenceDatabase
         .child('Organizations')
         .child(org)
         .child('Users')
-        .child(user.uid)
+        .child(user!.uid)
         .set(true);
 
     await referenceDatabase
         .child('Users')
-        .child(user.uid)
+        .child(user!.uid)
         .child('ParticipatingOrganizations')
         .child(org)
         .set(true);
@@ -90,6 +90,45 @@ Future<bool> addOrganization(String org) async {
     print(e);
   }
   return checkOrganization;
+}
+
+Future<List<String>> getAllTeamNames() async {
+  List<String> teams = [];
+
+  try {
+    await referenceDatabase.child('Teams').once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        teams.add(key);
+      });
+    });
+  } catch (e) {
+    print(e);
+  }
+  return teams;
+}
+
+Future<bool> addTeam(String team, String org) async {
+  bool checkTeam = false;
+  try {
+    await referenceDatabase
+        .child('Teams')
+        .child(team)
+        .child('0')
+        .set('Usuario de ejemplo / 0');
+
+    await referenceDatabase
+        .child('Organizations')
+        .child(org)
+        .child('teams')
+        .child(team)
+        .set(true);
+
+    checkTeam = true;
+  } catch (e) {
+    print(e);
+  }
+  return checkTeam;
 }
 
 Future<List<String>> getTeams(String org) async {
@@ -113,21 +152,182 @@ Future<List<String>> getTeams(String org) async {
   return teams;
 }
 
-Future<Map<dynamic, dynamic>> getPlayers(String team) async {
-  Map<dynamic, dynamic> values = new Map<dynamic, dynamic>();
+Future<Map<int, String?>> getPlayers(String? team) async {
+  Map<int, String?> result = new Map<int, String?>();
+
   try {
-    await referenceDatabase
-        .child('Teams')
-        .child(team)
-        .once()
-        .then((DataSnapshot snapshot) {
-      values = snapshot.value;
+    await referenceDatabase.child('Teams').once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        if (key == team) {
+          int i = 0;
+          for (var val in value) {
+            result[i] = val;
+
+            i++;
+          }
+        }
+      });
     });
   } catch (e) {
     print(e);
   }
 
-  return values;
+  return result;
+}
+
+Future<int?> getNumPlayers(String? team) async {
+  int? result = 0;
+  int aux = 0;
+  try {
+    await referenceDatabase.child('Teams').once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        if (key == team) {
+          result = values.values.elementAt(aux).length;
+        }
+        aux++;
+      });
+    });
+  } catch (e) {
+    print(e);
+  }
+
+  return result;
+}
+
+Future<bool> checkMinNumPlayers(String? team) async {
+  bool result = false;
+  int aux = 0;
+  try {
+    await referenceDatabase.child('Teams').once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        if (key == team) {
+          if (values.values.elementAt(aux).length > 1) {
+            result = true;
+          }
+        }
+        aux++;
+      });
+    });
+  } catch (e) {
+    print(e);
+  }
+
+  return result;
+}
+
+Future<int> getFirstValueAvailable(String team) async {
+  int result = 0;
+  int aux = 0;
+  bool check = true;
+  try {
+    await referenceDatabase.child('Teams').once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        if (key == team) {
+          for (var val in value) {
+            if (val == null) {
+              check = false;
+              result = aux;
+            } else {
+              if (check) result = aux + 1;
+            }
+            aux++;
+          }
+        }
+      });
+      return result;
+    });
+  } catch (e) {
+    print(e);
+  }
+
+  return result;
+}
+
+Future<int> getNumSpecificPlayers(String team, String player) async {
+  int result = 0;
+  try {
+    await referenceDatabase.child('Teams').once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        if (key == team) {
+          int i = 0;
+          for (var val in value) {
+            if (val == player) {
+              result = i;
+            }
+            i++;
+          }
+        }
+      });
+    });
+  } catch (e) {
+    print(e);
+  }
+
+  return result;
+}
+
+Future<bool> checkNumberPlayers(String? team, int numero) async {
+  bool result = false;
+  List<String?> listaNumeros = [];
+  try {
+    await referenceDatabase.child('Teams').once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        if (key == team) {
+          for (var val in value) {
+            var aux = val.split('/');
+            listaNumeros.add(aux[1].trim());
+          }
+          result = listaNumeros.contains(numero.toString());
+        }
+      });
+    });
+  } catch (e) {
+    print(e);
+  }
+
+  return result;
+}
+
+Future<bool> addPlayer(String name, String team) async {
+  bool checkPlayer = false;
+  int numero = await getFirstValueAvailable(team);
+
+  try {
+    await referenceDatabase
+        .child('Teams')
+        .child(team)
+        .child(numero.toString())
+        .set(name);
+
+    checkPlayer = true;
+  } catch (e) {
+    print(e);
+  }
+  return checkPlayer;
+}
+
+Future<bool> updatePlayer(String name, String team, String player) async {
+  bool checkPlayer = false;
+  int numero = await getNumSpecificPlayers(team, player);
+
+  try {
+    await referenceDatabase
+        .child('Teams')
+        .child(team)
+        .child(numero.toString())
+        .set(name);
+
+    checkPlayer = true;
+  } catch (e) {
+    print(e);
+  }
+  return checkPlayer;
 }
 
 Future<List<String>> getMatches(String org) async {
@@ -230,8 +430,8 @@ Future<List<String>> getAllEmails() async {
   return emails;
 }
 
-Future<List<String>> getEmails(String org) async {
-  List<String> emails = [];
+Future<List<String?>> getEmails(String org) async {
+  List<String?> emails = [];
 
   List<String> users = await getUsers(org);
   for (String user in users) {
@@ -260,11 +460,62 @@ Future<bool> getOwner(String org) async {
         .child('owner')
         .once()
         .then((DataSnapshot snapshot) {
-      owner = snapshot.value == user.uid;
+      owner = snapshot.value == user!.uid;
     });
   } catch (e) {
     print(e);
   }
 
   return owner;
+}
+
+Future<void> deleteOrganizations(String organization) async {
+  await referenceDatabase
+      .child('Users')
+      .child(user!.uid)
+      .child('ParticipatingOrganizations')
+      .child(organization)
+      .remove();
+
+  await referenceDatabase.child('Organizations').child(organization).remove();
+}
+
+Future<bool> deleteTeam(String org, String team) async {
+  bool checkDeleteTeam = false;
+
+  try {
+    await referenceDatabase
+        .child('Organizations')
+        .child(org)
+        .child('teams')
+        .child(team)
+        .remove();
+
+    await referenceDatabase.child('Teams').child(team).remove();
+
+    checkDeleteTeam = true;
+  } catch (e) {
+    print(e);
+  }
+
+  return checkDeleteTeam;
+}
+
+Future<bool> deletePlayer(String team, String player) async {
+  bool checkPlayer = false;
+  int numPlayer;
+
+  try {
+    numPlayer = await getNumSpecificPlayers(team, player);
+    await referenceDatabase
+        .child('Teams')
+        .child(team)
+        .child(numPlayer.toString())
+        .remove();
+    checkPlayer = true;
+  } catch (e) {
+    print(e);
+  }
+
+  return checkPlayer;
 }

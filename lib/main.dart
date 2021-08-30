@@ -5,11 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quick_stats/src/auth/Authenticate.dart';
 import 'package:quick_stats/src/auth/authenticationProvider.dart';
 import 'package:quick_stats/src/pages/home_page.dart';
+import 'package:quick_stats/src/pages/menu/match/match_basket.dart';
+import 'package:quick_stats/src/pages/menu/organization/Teams/create_teams.dart';
+import 'package:quick_stats/src/pages/menu/organization/Teams/edit_create_players.dart';
 import 'package:quick_stats/src/pages/menu/organization/Teams/edit_teams.dart';
 import 'package:quick_stats/src/pages/menu/organization/Users/invite_users.dart';
 import 'package:quick_stats/src/pages/menu/organization/organization.dart';
 import 'package:quick_stats/src/pages/menu/organization/organization_create.dart';
 import 'package:quick_stats/src/pages/menu/profile/requests.dart';
+import 'package:quick_stats/src/pages/menu/search/spectator_page.dart';
 import 'package:quick_stats/src/pages/menu_page.dart';
 import 'package:quick_stats/src/pages/prueba_login.dart';
 
@@ -48,6 +52,11 @@ class MyApp extends StatelessWidget {
               OrganizationInviteUsersPage(),
           'OrganizationCreate': (BuildContext context) =>
               OrganizationCreatePage(),
+          'TeamCreate': (BuildContext context) => TeamCreatePage(),
+          'EditCreatePlayers': (BuildContext context) =>
+              EditCreatePlayersPage(),
+          'BasketMatch': (BuildContext context) => MatchBasketPage(),
+          'SpectatorPage': (BuildContext context) => SpectatorPage(),
         },
         theme: ThemeData(primaryColor: Colors.deepOrange, fontFamily: 'Sen'),
       ),

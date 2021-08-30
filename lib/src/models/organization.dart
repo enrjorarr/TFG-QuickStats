@@ -17,10 +17,10 @@ class Organization {
     this.owner,
   });
 
-  String name;
-  int numTeams;
-  int numUsers;
-  String owner;
+  String? name;
+  int? numTeams;
+  int? numUsers;
+  String? owner;
 
   factory Organization.fromJson(Map<dynamic, dynamic> json) => Organization(
         name: json["name"],

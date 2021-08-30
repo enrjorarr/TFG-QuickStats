@@ -15,7 +15,7 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  final User user = FirebaseAuth.instance.currentUser;
+  final User? user = FirebaseAuth.instance.currentUser;
 
   // Variables
   int pageIndex = 2;
@@ -39,7 +39,10 @@ class _MenuPageState extends State<MenuPage> {
             IconButton(
               icon: Icon(Icons.group_add),
               onPressed: () {
-                Navigator.pushNamed(context, "OrganizationCreate");
+                Navigator.pushNamed(context, "OrganizationCreate")
+                    .then((value) => setState(() {
+                          _showPage = new OrganizationPage();
+                        }));
               },
             )
         ],
@@ -95,35 +98,29 @@ class _MenuPageState extends State<MenuPage> {
       case 0:
         titulo = 'Search';
         return _searchPage;
-        break;
+
       case 1:
         titulo = 'Favorite';
 
         return _favoritePage;
-        break;
+
       case 2:
         titulo = 'Match';
 
         return _matchPage;
-        break;
+
       case 3:
         titulo = 'Organization';
 
         return _organizationPage;
-        break;
+
       case 4:
         titulo = 'Profile';
 
         return _profilePage;
-        break;
+
       default:
         return _searchPage;
-        break;
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 }

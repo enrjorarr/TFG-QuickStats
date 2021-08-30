@@ -2,7 +2,17 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationPage extends StatelessWidget {
+const KLargeTextStyle =
+    TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
+const KTitleTextStyle =
+    TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black);
+
+class OrganizationPage extends StatefulWidget {
+  @override
+  _OrganizationPageState createState() => _OrganizationPageState();
+}
+
+class _OrganizationPageState extends State<OrganizationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,9 +81,55 @@ class OrganizationPage extends StatelessWidget {
             onTap: () async {
               bool owner = await getOwner(organization);
               Navigator.pushNamed(context, "OrganizationGames",
-                  arguments: {"organization": organization, "owner": owner});
+                      arguments: {"organization": organization, "owner": owner})
+                  .then((value) => setState(() {}));
+            },
+            onLongPress: () async {
+              if (await getOwner(organization)) {
+                createAlertDialog(context, organization);
+              }
             },
           )),
     );
+  }
+
+  createAlertDialog(BuildContext context, String organization) {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(
+                organization,
+                style: KLargeTextStyle,
+              ),
+              content: Text(
+                "¿Quieres eliminar esta organización?",
+                style: KTitleTextStyle,
+              ),
+              elevation: 15,
+              backgroundColor: Color.fromRGBO(255, 203, 119, 1),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      deleteOrganizations(organization);
+                      Navigator.pop(context);
+                      setState(() {});
+                    },
+                    child: Text(
+                      "Si",
+                      style: KLargeTextStyle,
+                    )),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      setState(() {});
+                    },
+                    child: Text(
+                      "No",
+                      style: KLargeTextStyle,
+                    ))
+              ],
+            ));
   }
 }

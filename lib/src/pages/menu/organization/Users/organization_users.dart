@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
 class OrganizationUsersPage extends StatelessWidget {
-  final String organization;
+  final String? organization;
 
-  const OrganizationUsersPage({Key key, this.organization}) : super(key: key);
+  const OrganizationUsersPage({Key? key, this.organization}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getEmails(organization),
+        future: getEmails(organization!),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {

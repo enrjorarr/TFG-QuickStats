@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   final referenceDatabase = FirebaseDatabase.instance.reference();
   final textController = TextEditingController();
   // Organization organization = new Organization();
-  User user = FirebaseAuth.instance.currentUser;
+  User? user = FirebaseAuth.instance.currentUser;
   Usuario usuario = new Usuario();
 
   @override
@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
       body: Container(
         child: SingleChildScrollView(
           child: Column(
-            children: [Text(user.displayName), _logout(context)],
+            children: [Text(user!.displayName!), _logout(context)],
           ),
         ),
       ),

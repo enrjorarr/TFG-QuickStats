@@ -12,7 +12,7 @@ const KTitleTextStyle =
 class ProfilePage extends StatelessWidget {
   //Firebase
   final referenceDatabase = FirebaseDatabase.instance.reference();
-  final User user = FirebaseAuth.instance.currentUser;
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class ProfilePage extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: NetworkImage(user.photoURL),
+                      image: NetworkImage(user!.photoURL!),
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -38,12 +38,12 @@ class ProfilePage extends StatelessWidget {
               ),
               SizedBox(height: 40),
               Text(
-                user.displayName,
+                user!.displayName!,
                 style: KLargeTextStyle,
               ),
               SizedBox(height: 30),
               Text(
-                user.email,
+                user!.email!,
                 style: KLargeTextStyle,
               ),
               SizedBox(height: 40),

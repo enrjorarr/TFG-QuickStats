@@ -19,7 +19,7 @@ class RequestsPage extends StatefulWidget {
 class _RequestsPageState extends State<RequestsPage> {
   final referenceDatabase = FirebaseDatabase.instance.reference();
 
-  final User user = FirebaseAuth.instance.currentUser;
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
