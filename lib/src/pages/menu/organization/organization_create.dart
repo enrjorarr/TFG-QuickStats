@@ -54,7 +54,7 @@ class _OrganizationCreatePageState extends State<OrganizationCreatePage> {
           controller: organizationController,
           maxLength: 80,
           decoration: InputDecoration(
-            hintText: 'Nombre de la organización',
+            hintText: 'Organización',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
             ),

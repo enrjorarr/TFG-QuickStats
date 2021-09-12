@@ -5,7 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quick_stats/src/auth/Authenticate.dart';
 import 'package:quick_stats/src/auth/authenticationProvider.dart';
 import 'package:quick_stats/src/pages/home_page.dart';
+import 'package:quick_stats/src/pages/menu/favorite/favorite.dart';
+import 'package:quick_stats/src/pages/menu/favorite/favorite_search.dart';
 import 'package:quick_stats/src/pages/menu/match/match_basket.dart';
+import 'package:quick_stats/src/pages/menu/organization/Matchs/organization_match.dart';
 import 'package:quick_stats/src/pages/menu/organization/Teams/create_teams.dart';
 import 'package:quick_stats/src/pages/menu/organization/Teams/edit_create_players.dart';
 import 'package:quick_stats/src/pages/menu/organization/Teams/edit_teams.dart';
@@ -57,6 +60,10 @@ class MyApp extends StatelessWidget {
               EditCreatePlayersPage(),
           'BasketMatch': (BuildContext context) => MatchBasketPage(),
           'SpectatorPage': (BuildContext context) => SpectatorPage(),
+          'FavoriteSearchPage': (BuildContext context) => FavoriteSearchPage(),
+          'FavoritePage': (BuildContext context) => FavoritePage(),
+          'OrganizationMatch': (BuildContext context) =>
+              OrganizationMatchPage(),
         },
         theme: ThemeData(primaryColor: Colors.deepOrange, fontFamily: 'Sen'),
       ),

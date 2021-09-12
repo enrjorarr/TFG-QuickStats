@@ -1,17 +1,23 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationGamesPage extends StatelessWidget {
+class OrganizationGamesPage extends StatefulWidget {
   final String? organization;
 
   const OrganizationGamesPage({Key? key, this.organization}) : super(key: key);
 
   @override
+  _OrganizationGamesPageState createState() => _OrganizationGamesPageState();
+}
+
+class _OrganizationGamesPageState extends State<OrganizationGamesPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getMatches(organization!),
+        future: getMatches(widget.organization!),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -25,10 +31,15 @@ class OrganizationGamesPage extends StatelessWidget {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  final organization = snapshot.data[index];
+                  final String match = snapshot.data[index];
+                  var aux = match.split('|');
+                  String date = aux[1].trim();
+                  var partido = aux[0].trim();
+
                   return FadeInRight(
                     delay: Duration(milliseconds: 100 * index),
-                    child: listaOrganizaciones(context, organization),
+                    child: listaOrganizaciones(
+                        context, match, widget.organization, date, partido),
                   );
                 },
               );
@@ -47,7 +58,8 @@ class OrganizationGamesPage extends StatelessWidget {
     );
   }
 
-  Widget listaOrganizaciones(BuildContext context, String organization) {
+  Widget listaOrganizaciones(BuildContext context, String match,
+      String? organization, String date, String partido) {
     return Card(
       elevation: 5.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -64,28 +76,63 @@ class OrganizationGamesPage extends StatelessWidget {
               child: Icon(Icons.people, color: Colors.white),
             ),
             title: Text(
-              organization,
+              match,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
                   fontWeight: FontWeight.bold),
             ),
+            subtitle: Text(date),
             trailing: Icon(Icons.keyboard_arrow_right,
                 color: Colors.white, size: 30.0),
             onTap: () {
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => OrganizationGamesPage(
-              //         organization: organization,
-              //       ),
-              //     ));
-              Navigator.pushNamed(context, "OrganizationGames",
-                  arguments: {"organization": organization});
-
-              // Navigator.of(context).pushNamed('OrganizationGames');
+              Navigator.pushNamed(context, "OrganizationMatch", arguments: {
+                "organization": organization,
+                "match": match,
+                "partido": partido
+              });
+            },
+            onLongPress: () async {
+              if (await getOwner(organization!)) {
+                createAlertDialog(context, organization, match);
+              }
             },
           )),
     );
+  }
+
+  createAlertDialog(BuildContext context, String? organization, String match) {
+    return AwesomeDialog(
+        context: context,
+        dialogType: DialogType.QUESTION,
+        animType: AnimType.BOTTOMSLIDE,
+        title: match,
+        desc: '¿Deseas eliminar este partido de la organización?',
+        btnOkText: 'Aceptar',
+        btnCancelText: 'Cancelar',
+        btnCancelOnPress: () {},
+        btnOkOnPress: () async {
+          if (await deleteMatch(organization!, match)) {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(
+                  'Se ha eliminado el partido correctamente',
+                  textAlign: TextAlign.center,
+                ),
+              ));
+          } else {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(
+                  'Ha ocurrido un error elminando el partido',
+                  textAlign: TextAlign.center,
+                ),
+              ));
+          }
+          setState(() {});
+        })
+      ..show();
   }
 }

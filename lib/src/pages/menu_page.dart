@@ -32,10 +32,11 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(titulo),
         actions: [
-          if (titulo == "Organization")
+          if (titulo == "Organizaciones")
             IconButton(
               icon: Icon(Icons.group_add),
               onPressed: () {
@@ -44,7 +45,17 @@ class _MenuPageState extends State<MenuPage> {
                           _showPage = new OrganizationPage();
                         }));
               },
-            )
+            ),
+          if (titulo == 'Organizaciones favoritas')
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                Navigator.pushNamed(context, "FavoriteSearchPage")
+                    .then((value) => setState(() {
+                          _showPage = new FavoritePage();
+                        }));
+              },
+            ),
         ],
       ),
       body: _showPage,
@@ -96,26 +107,26 @@ class _MenuPageState extends State<MenuPage> {
   Widget _pageChooser(int page) {
     switch (page) {
       case 0:
-        titulo = 'Search';
+        titulo = 'Buscar Partido';
         return _searchPage;
 
       case 1:
-        titulo = 'Favorite';
+        titulo = 'Organizaciones favoritas';
 
         return _favoritePage;
 
       case 2:
-        titulo = 'Match';
+        titulo = 'Partido';
 
         return _matchPage;
 
       case 3:
-        titulo = 'Organization';
+        titulo = 'Organizaciones';
 
         return _organizationPage;
 
       case 4:
-        titulo = 'Profile';
+        titulo = 'Perfil';
 
         return _profilePage;
 

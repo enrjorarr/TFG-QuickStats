@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final time = timeFromJson(jsonString);
-
 import 'package:firebase_database/firebase_database.dart';
 
 class Time {

@@ -21,8 +21,9 @@ class _MatchPageState extends State<MatchPage> {
     super.initState();
     asyncMethod().then((value) {
       organizaciones = value;
-
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
   }
 
@@ -158,11 +159,13 @@ class _MatchPageState extends State<MatchPage> {
           if (_chosenValue1 != _chosenValue2) {
             if (_chosenValue1 != null && _chosenValue2 != null) {
               if (await matchExist(_chosenValue1!, _chosenValue2!)) {
-                await createMatch(_chosenValue1, _chosenValue2);
-                Navigator.pushNamed(context, "BasketMatch", arguments: {
-                  "local": _chosenValue1,
-                  "visitor": _chosenValue2
-                }).then((value) => setState(() {}));
+                await createMatch(_chosenValue1, _chosenValue2).then((value) =>
+                    Navigator.pushReplacementNamed(context, "BasketMatch",
+                        arguments: {
+                          "local": _chosenValue1,
+                          "visitor": _chosenValue2,
+                          "organization": _chosenValue
+                        }));
               } else {
                 ScaffoldMessenger.of(context)
                   ..removeCurrentSnackBar()

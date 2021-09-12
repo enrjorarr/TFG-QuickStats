@@ -1,13 +1,10 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:quick_stats/src/models/time_match.dart';
 import 'package:quick_stats/src/requests/match_request.dart';
 
 String? local = '';
 String? visitor = '';
 String? organization;
 bool isLoading = true;
-var sub;
 
 //Variables equipo local
 List<dynamic> localTeam = [];
@@ -39,14 +36,14 @@ var visitor9;
 var visitor10;
 var visitor11;
 
-class SpectatorPage extends StatefulWidget {
+class OrganizationMatchPage extends StatefulWidget {
   @override
-  SpectatorPageState createState() => SpectatorPageState();
+  OrganizationMatchPageState createState() => OrganizationMatchPageState();
 }
 
-class SpectatorPageState extends State<SpectatorPage> {
-  String tiempo = '10:00';
-  int periodo = 1;
+class OrganizationMatchPageState extends State<OrganizationMatchPage> {
+  String tiempo = '00:00';
+  int periodo = 4;
   String _match = '';
   int localPoints = 0;
   int visitorPoints = 0;
@@ -57,66 +54,26 @@ class SpectatorPageState extends State<SpectatorPage> {
     Future.delayed(Duration(seconds: 5), () {
       asyncMethod();
     });
-
-    final referenceDatabase = FirebaseDatabase.instance
-        .reference()
-        .child('LiveMatches')
-        .child(_match);
-    sub = referenceDatabase.onChildChanged.listen(_onEntryChanged);
-  }
-
-  _onEntryChanged(Event event) {
-    setState(() {
-      tiempo = Time.fromSnapshot(event.snapshot).tiempo;
-      periodo = Time.fromSnapshot(event.snapshot).periodo;
-      localPoints = event.snapshot.value['$local-points'];
-      visitorPoints = event.snapshot.value['$visitor-points'];
-
-      local0 = event.snapshot.value[local][0];
-      local1 = event.snapshot.value[local][1];
-      local2 = event.snapshot.value[local][2];
-      local3 = event.snapshot.value[local][3];
-      local4 = event.snapshot.value[local][4];
-      local5 = event.snapshot.value[local][5];
-      local6 = event.snapshot.value[local][6];
-      local7 = event.snapshot.value[local][7];
-      local8 = event.snapshot.value[local][8];
-      local9 = event.snapshot.value[local][9];
-      local10 = event.snapshot.value[local][10];
-      local11 = event.snapshot.value[local][11];
-
-      visitor0 = event.snapshot.value[visitor][0];
-      visitor1 = event.snapshot.value[visitor][1];
-      visitor2 = event.snapshot.value[visitor][2];
-      visitor3 = event.snapshot.value[visitor][3];
-      visitor4 = event.snapshot.value[visitor][4];
-      visitor5 = event.snapshot.value[visitor][5];
-      visitor6 = event.snapshot.value[visitor][6];
-      visitor7 = event.snapshot.value[visitor][7];
-      visitor8 = event.snapshot.value[visitor][8];
-      visitor9 = event.snapshot.value[visitor][9];
-      visitor10 = event.snapshot.value[visitor][10];
-      visitor11 = event.snapshot.value[visitor][11];
-    });
   }
 
   @override
   void dispose() {
-    sub.cancel();
     isLoading = true;
     super.dispose();
   }
 
   Future<void> asyncMethod() async {
-    localTeam = await getLocalVisitorTeam(_match, local);
-    visitorTeam = await getLocalVisitorTeam(_match, visitor);
+    localTeam =
+        await getLocalVisitorTeamFromOrganization(organization, _match, local);
+    visitorTeam = await getLocalVisitorTeamFromOrganization(
+        organization, _match, visitor);
 
-    localPoints = await getLocalVisitorPoints(_match, local);
-    visitorPoints = await getLocalVisitorPoints(_match, visitor);
+    localPoints = await getLocalVisitorPointsFromOrganization(
+        organization, _match, local);
+    visitorPoints = await getLocalVisitorPointsFromOrganization(
+        organization, _match, visitor);
 
-    tiempo = await getTime(_match);
-    periodo = await getPeriod(_match);
-
+    //Asignar variables locales
     visitor0 = visitorTeam[0];
     visitor1 = visitorTeam[1];
     visitor2 = visitorTeam[2];
@@ -154,7 +111,9 @@ class SpectatorPageState extends State<SpectatorPage> {
     final rcvdData = ModalRoute.of(context)!.settings.arguments as Map;
 
     _match = rcvdData['match'] as String;
-    var aux = _match.split('-');
+    String partido = rcvdData['partido'] as String;
+    organization = rcvdData['organization'] as String;
+    var aux = partido.split('-');
     local = aux[0].trim();
     visitor = aux[1].trim();
 
@@ -170,7 +129,7 @@ class SpectatorPageState extends State<SpectatorPage> {
           )
         : Scaffold(
             appBar: AppBar(
-              title: Text(_match),
+              title: Text(partido),
               centerTitle: true,
             ),
             body: Container(
@@ -319,6 +278,26 @@ class SpectatorPageState extends State<SpectatorPage> {
           );
   }
 
+  // Widget _botonjugador(BuildContext context) {
+  //   final size = MediaQuery.of(context).size;
+
+  //   return ElevatedButton(
+  //       child: Container(
+  //         // padding: EdgeInsets.symmetric(
+  //         //     horizontal: size.width * 0.1, vertical: size.height * 0.015),
+  //         child: Text(
+  //           '5',
+  //         ),
+  //       ),
+  //       style: ElevatedButton.styleFrom(
+  //           shape: CircleBorder(),
+  //           padding: EdgeInsets.all(size.width * 0.04),
+  //           primary: Colors.deepOrange),
+  //       onPressed: () {
+  //         print('asdas');
+  //       });
+  // }
+
   Widget _botonjugador(BuildContext context, Size size, var player) {
     return ElevatedButton(
       child: Container(
@@ -340,18 +319,15 @@ class SpectatorPageState extends State<SpectatorPage> {
         backgroundColor: Colors.transparent,
         context: context,
         builder: (builder) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              child: Container(
-                  child: _bottonNavigationMenu(player),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(20),
-                          topRight: const Radius.circular(20)))),
-            );
-          });
+          return Container(
+            child: Container(
+                child: _bottonNavigationMenu(player),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(20),
+                        topRight: const Radius.circular(20)))),
+          );
         });
   }
 

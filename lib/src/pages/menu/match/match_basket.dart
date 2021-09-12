@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/match_request.dart';
 
 String? local;
 String? visitor;
+String? organization;
+bool isLoading = true;
 
 //Variables equipo local
 List<dynamic> localTeam = [];
@@ -27,9 +30,6 @@ String? local8;
 String? local9;
 String? local10;
 String? local11;
-String? local12;
-String? local13;
-String? local14;
 
 //Variables equipo visitante
 List<dynamic> visitorTeam = [];
@@ -52,20 +52,19 @@ String? visitor8;
 String? visitor9;
 String? visitor10;
 String? visitor11;
-String? visitor12;
-String? visitor13;
-String? visitor14;
 
 class MatchBasketPage extends StatefulWidget {
   @override
   MatchBasketPageState createState() => MatchBasketPageState();
 }
 
-class MatchBasketPageState extends State<MatchBasketPage> {
-  static const maxSeconds = 59;
-  static const maxMinutes = 10;
+class MatchBasketPageState extends State<MatchBasketPage>
+    with WidgetsBindingObserver {
+  static const maxSeconds = 10;
+  static const maxMinutes = 2;
   int seconds = 00;
   int minutes = maxMinutes;
+  int periodo = 1;
   Timer? timer;
   int localPoints = 0;
   int visitorPoints = 0;
@@ -73,13 +72,28 @@ class MatchBasketPageState extends State<MatchBasketPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () {
-      // final rcvdData = ModalRoute.of(context)!.settings.arguments as Map;
 
-      // local = rcvdData['local'] as String?;
-      // visitor = rcvdData['visitor'] as String?;
+    WidgetsBinding.instance!.addObserver(this);
+    Future.delayed(Duration(seconds: 5), () {
       asyncMethod();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    isLoading = true;
+
+    super.dispose();
+  }
+
+  @override
+  didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.detached) {
+      deleteLiveMatch('$local - $visitor');
+    }
   }
 
   Future<void> asyncMethod() async {
@@ -99,9 +113,6 @@ class MatchBasketPageState extends State<MatchBasketPage> {
     visitor9 = visitorTeam[9]['number'];
     visitor10 = visitorTeam[10]['number'];
     visitor11 = visitorTeam[11]['number'];
-    visitor12 = visitorTeam[12]['number'];
-    visitor13 = visitorTeam[13]['number'];
-    visitor14 = visitorTeam[14]['number'];
 
     _onChangeVisitorBase = visitor0!;
     _onChangeVisitor1Alero = visitor1;
@@ -120,9 +131,6 @@ class MatchBasketPageState extends State<MatchBasketPage> {
     visitorBench.add(visitor9);
     visitorBench.add(visitor10);
     visitorBench.add(visitor11);
-    visitorBench.add(visitor12);
-    visitorBench.add(visitor13);
-    visitorBench.add(visitor14);
 
     //Asignar variables locales
     local0 = localTeam[0]['number'];
@@ -137,9 +145,6 @@ class MatchBasketPageState extends State<MatchBasketPage> {
     local9 = localTeam[9]['number'];
     local10 = localTeam[10]['number'];
     local11 = localTeam[11]['number'];
-    local12 = localTeam[12]['number'];
-    local13 = localTeam[13]['number'];
-    local14 = localTeam[14]['number'];
 
     _onChangeLocalBase = local0!;
     _onChangeLocal1Alero = local1;
@@ -158,9 +163,7 @@ class MatchBasketPageState extends State<MatchBasketPage> {
     localBench.add(local9);
     localBench.add(local10);
     localBench.add(local11);
-    localBench.add(local12);
-    localBench.add(local13);
-    localBench.add(local14);
+    isLoading = false;
 
     setState(() {});
   }
@@ -171,136 +174,213 @@ class MatchBasketPageState extends State<MatchBasketPage> {
 
     local = rcvdData['local'] as String?;
     visitor = rcvdData['visitor'] as String?;
+    organization = rcvdData['organization'] as String?;
     final size = MediaQuery.of(context).size;
-    return Stack(children: [
-      SizedBox.expand(
-        child: Image.asset(
-          'assets/fondoPartido.png',
-          fit: BoxFit.fill,
-        ),
-      ),
-      Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text("hola"),
-        ),
-        body: Container(
-            // decoration: BoxDecoration(
-            //     image: DecorationImage(
-            //         scale: size.aspectRatio,
-            //         image: AssetImage("assets/fondoPartido.png"),
-            //         fit: BoxFit.cover)),
-            child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                height: size.height * 0.001,
+    return isLoading
+        ? Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.deepOrange),
+                backgroundColor: Colors.white,
               ),
-              // PIVOTS
-              Row(
-                children: [
-                  Spacer(),
-                  _botonjugadorPivot1Local(context, size),
-                  Spacer(
-                    flex: 2,
-                  ),
-                  _botonjugadorPivot2Local(context, size),
-                  Spacer()
-                ],
+            ),
+          )
+        : Stack(children: [
+            SizedBox.expand(
+              child: Image.asset(
+                'assets/fondoPartido.png',
+                fit: BoxFit.fill,
               ),
-              SizedBox(
-                height: size.height * 0.07,
-              ),
-              // ALEROS
-              Row(
-                children: [
-                  Spacer(),
-                  _botonjugadorAlero1Local(context, size),
-                  Spacer(
-                    flex: 4,
-                  ),
-                  _botonjugadorAlero2Local(context, size),
-                  Spacer()
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.045,
-              ),
-              // BASE
-              Row(
-                children: [
-                  Expanded(child: _botonjugadorBaseLocal(context, size))
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.043,
-              ),
-              Row(
-                children: [
-                  Spacer(),
-                  Column(
-                    children: [
-                      Text(local!),
-                      Text(localPoints.toString()),
+            ),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                actions: [
+                  PopupMenuButton<int>(
+                    elevation: 7,
+                    color: Colors.deepOrange,
+                    onSelected: (item) => onSelected(context, item),
+                    itemBuilder: (context) => [
+                      PopupMenuItem<int>(
+                        value: 0,
+                        child: Row(
+                          children: [
+                            Icon(Icons.save_alt),
+                            const SizedBox(width: 8),
+                            Text('Guardar',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.018,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<int>(
+                        value: 1,
+                        child: Row(
+                          children: [
+                            Icon(Icons.exit_to_app),
+                            const SizedBox(width: 8),
+                            Text('Salir',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: size.height * 0.018,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                  Spacer(),
-                  _buildTimer(context, size, local!, visitor!),
-                  Spacer(),
-                  Column(
-                    children: [
-                      Text(visitor!),
-                      Text(visitorPoints.toString()),
-                    ],
-                  ),
-                  Spacer(),
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.043,
-              ),
-              // BASE
-              Row(
-                children: [
-                  Expanded(child: _botonjugadorBaseVisitante(context, size))
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.0,
-              ),
-              // ALEROS
-              Row(
-                children: [
-                  Spacer(),
-                  _botonjugadorAlero1Visitante(context, size),
-                  Spacer(
-                    flex: 4,
-                  ),
-                  _botonjugadorAlero2Visitante(context, size),
-                  Spacer()
-                ],
-              ),
-              SizedBox(
-                height: size.height * 0.07,
-              ),
 
-              // PIVOTS
-              Row(
-                children: [
-                  Spacer(),
-                  _botonjugadorPivot1Visitante(context, size),
-                  Spacer(
-                    flex: 2,
-                  ),
-                  _botonjugadorPivot2Visitante(context, size),
-                  Spacer()
+                  // IconButton(
+                  //     onPressed: () async {
+                  //       if (await checkPeriodAndtime('$local - $visitor')) {
+                  //         if (await addMatchToOrganization(
+                  //             local, visitor, organization!)) {
+                  //           deleteLiveMatch('$local - $visitor');
+                  //         }
+                  //       } else {
+                  //         ScaffoldMessenger.of(context)
+                  //           ..removeCurrentSnackBar()
+                  //           ..showSnackBar(SnackBar(
+                  //             content: Text(
+                  //               'El partido aún no ha finalizado',
+                  //               textAlign: TextAlign.center,
+                  //             ),
+                  //           ));
+                  //       }
+                  //     },
+                  //     icon: Icon(Icons.save))
                 ],
+                centerTitle: true,
+                title: Text("$local - $visitor",
+                    style: TextStyle(
+                        fontSize: size.height * 0.026,
+                        fontWeight: FontWeight.bold)),
               ),
-            ],
-          ),
-        )),
-      ),
-    ]);
+              body: Container(
+                  // decoration: BoxDecoration(
+                  //     image: DecorationImage(
+                  //         scale: size.aspectRatio,
+                  //         image: AssetImage("assets/fondoPartido.png"),
+                  //         fit: BoxFit.cover)),
+                  child: Center(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: size.height * 0.001,
+                    ),
+                    // PIVOTS
+                    Row(
+                      children: [
+                        Spacer(),
+                        _botonjugadorPivot1Local(context, size),
+                        Spacer(
+                          flex: 2,
+                        ),
+                        _botonjugadorPivot2Local(context, size),
+                        Spacer()
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.07,
+                    ),
+                    // ALEROS
+                    Row(
+                      children: [
+                        Spacer(),
+                        _botonjugadorAlero1Local(context, size),
+                        Spacer(
+                          flex: 4,
+                        ),
+                        _botonjugadorAlero2Local(context, size),
+                        Spacer()
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.045,
+                    ),
+                    // BASE
+                    Row(
+                      children: [
+                        Expanded(child: _botonjugadorBaseLocal(context, size))
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.023,
+                    ),
+                    Row(
+                      children: [
+                        Spacer(),
+                        Column(
+                          children: [
+                            Text(local!),
+                            Text(localPoints.toString()),
+                          ],
+                        ),
+                        Spacer(),
+                        Column(
+                          children: [
+                            _buildTimer(context, size, local!, visitor!),
+                            Text('Periodo $periodo')
+                          ],
+                        ),
+                        Spacer(),
+                        Column(
+                          children: [
+                            Text(visitor!),
+                            Text(visitorPoints.toString()),
+                          ],
+                        ),
+                        Spacer(),
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.043,
+                    ),
+                    // BASE
+                    Row(
+                      children: [
+                        Expanded(
+                            child: _botonjugadorBaseVisitante(context, size))
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.0,
+                    ),
+                    // ALEROS
+                    Row(
+                      children: [
+                        Spacer(),
+                        _botonjugadorAlero1Visitante(context, size),
+                        Spacer(
+                          flex: 4,
+                        ),
+                        _botonjugadorAlero2Visitante(context, size),
+                        Spacer()
+                      ],
+                    ),
+                    SizedBox(
+                      height: size.height * 0.07,
+                    ),
+
+                    // PIVOTS
+                    Row(
+                      children: [
+                        Spacer(),
+                        _botonjugadorPivot1Visitante(context, size),
+                        Spacer(
+                          flex: 2,
+                        ),
+                        _botonjugadorPivot2Visitante(context, size),
+                        Spacer()
+                      ],
+                    ),
+                  ],
+                ),
+              )),
+            ),
+          ]);
   }
 
   Widget _buildTimer(
@@ -311,12 +391,6 @@ class MatchBasketPageState extends State<MatchBasketPage> {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // CircularProgressIndicator(
-          //   value: seconds / maxSeconds,
-          //   strokeWidth: 11,
-          //   valueColor: AlwaysStoppedAnimation(Colors.white),
-          //   backgroundColor: Colors.orange[200],
-          // ),
           Center(
             child: _circleTimer(context, size, local, visitor),
           )
@@ -330,27 +404,35 @@ class MatchBasketPageState extends State<MatchBasketPage> {
     var isRunning = timer == null ? false : timer!.isActive;
 
     return ElevatedButton(
-        child: Text(
-          '$minutes : $seconds',
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: size.height * 0.03),
-        ),
-        style: OutlinedButton.styleFrom(
-          fixedSize: size,
-          shadowColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
-          shape: CircleBorder(),
-        ),
-        onPressed: () {
-          if (isRunning) {
-            stopTimer();
-            isRunning = false;
-          } else {
-            startTimer(local, visitor);
-          }
-        });
+      child: Text(
+        '$minutes : $seconds',
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontSize: size.height * 0.03),
+      ),
+      style: OutlinedButton.styleFrom(
+        fixedSize: size,
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        shape: CircleBorder(),
+      ),
+      onPressed: () {
+        if (isRunning) {
+          stopTimer();
+          isRunning = false;
+        } else {
+          startTimer(local, visitor);
+        }
+      },
+      onLongPress: () {
+        if (isRunning) {
+          stopTimer();
+          isRunning = false;
+        }
+        _bottomSheetButtonTimer();
+      },
+    );
   }
 
   void startTimer(String local, String visitor) {
@@ -358,7 +440,7 @@ class MatchBasketPageState extends State<MatchBasketPage> {
       if (seconds > 0) {
         setState(() {
           seconds--;
-          setTime('$minutes : $seconds', local, visitor);
+          setTime('$minutes : $seconds', '$local - $visitor');
         });
       } else {
         if (minutes > 0) {
@@ -564,6 +646,90 @@ class MatchBasketPageState extends State<MatchBasketPage> {
         visitorPlaying.remove(_onChangeVisitor2Pivot);
         _bottomSheetButtonPlayers(_onChangeVisitor2Pivot!, 'visitor');
       },
+    );
+  }
+
+  void _bottomSheetButtonTimer() {
+    showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (builder) {
+          return Container(
+            child: Container(
+                child:
+                    SingleChildScrollView(child: _bottonNavigationMenuTimer()),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(20),
+                        topRight: const Radius.circular(20)))),
+          );
+        });
+  }
+
+  Column _bottonNavigationMenuTimer() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          leading: Icon(Icons.timer),
+          title: Text('1 segundo'),
+          onTap: () async {
+            addTime(1);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.timer),
+          title: Text('5 segundos'),
+          onTap: () async {
+            addTime(5);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.timer),
+          title: Text('10 segundos'),
+          onTap: () async {
+            addTime(10);
+
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.timer),
+          title: Text('30 segundos'),
+          onTap: () async {
+            addTime(30);
+
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.timer),
+          title: Text('1 minuto'),
+          onTap: () async {
+            addTime(60);
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.timer),
+          title: Text('Reiniciar contador'),
+          onTap: () async {
+            resetTimer();
+            Navigator.pop(context);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.ac_unit),
+          title: Text('Pasar de cuarto'),
+          onTap: () async {
+            addPeriod();
+            Navigator.pop(context);
+          },
+        )
+      ],
     );
   }
 
@@ -836,7 +1002,129 @@ class MatchBasketPageState extends State<MatchBasketPage> {
 
     return childs;
   }
+
+  void addTime(int time) {
+    int newSeconds = seconds + time;
+    if (newSeconds > 59) {
+      if ((minutes + 1) > 9) {
+        ScaffoldMessenger.of(context)
+          ..removeCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            content: Text(
+              'No es posible añadir más tiempo',
+              textAlign: TextAlign.center,
+            ),
+          ));
+      } else {
+        seconds = newSeconds - 60;
+        minutes++;
+      }
+    } else {
+      seconds = newSeconds;
+    }
+    setTime('$minutes : $seconds', '$local - $visitor');
+    setState(() {});
+  }
+
+  void resetTimer() {
+    minutes = maxMinutes;
+    seconds = 00;
+    setTime('$minutes : $seconds', '$local - $visitor');
+    setState(() {});
+  }
+
+  void addPeriod() {
+    if ((periodo + 1) > 4) {
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(
+            'El partido se encuentra en el último cuarto',
+            textAlign: TextAlign.center,
+          ),
+        ));
+    } else {
+      periodo++;
+      setPeriod(periodo, '$local - $visitor');
+      resetTimer();
+    }
+  }
 }
+
+saveAlert(BuildContext context) {
+  return AwesomeDialog(
+    context: context,
+    dialogType: DialogType.QUESTION,
+    animType: AnimType.BOTTOMSLIDE,
+    title: 'Guardar datos',
+    desc:
+        '¿Deseas guardar los datos de este partido dentro de la organización?',
+    btnOkText: 'Aceptar',
+    btnCancelText: 'Cancelar',
+    btnCancelOnPress: () {},
+    btnOkOnPress: () async {
+      if (await addMatchToOrganization(local, visitor, organization!)) {
+        if (await deleteLiveMatch('$local - $visitor')) {
+          isLoading = true;
+          Navigator.pushReplacementNamed(context, 'Menu');
+        }
+      }
+    },
+  )..show();
+}
+
+exitAlert(BuildContext context) {
+  return AwesomeDialog(
+      context: context,
+      dialogType: DialogType.WARNING,
+      animType: AnimType.BOTTOMSLIDE,
+      title: 'Salir del partido',
+      desc:
+          '¿Estás seguro de abandonar el partido? Se perderán los datos del encuentro',
+      btnOkText: 'Aceptar',
+      btnCancelText: 'Cancelar',
+      btnCancelOnPress: () {},
+      btnOkOnPress: () async {
+        if (await deleteLiveMatch('$local - $visitor')) {
+          isLoading = true;
+          Navigator.pushReplacementNamed(context, 'Menu');
+        } else {
+          ScaffoldMessenger.of(context)
+            ..removeCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text(
+                'Ha ocurrido un error',
+                textAlign: TextAlign.center,
+              ),
+            ));
+        }
+      })
+    ..show();
+}
+
+void onSelected(BuildContext context, int item) async {
+  switch (item) {
+    case 0:
+      if (await checkPeriodAndtime('$local - $visitor')) {
+        saveAlert(context);
+      } else {
+        ScaffoldMessenger.of(context)
+          ..removeCurrentSnackBar()
+          ..showSnackBar(SnackBar(
+            content: Text(
+              'El partido aún no ha finalizado',
+              textAlign: TextAlign.center,
+            ),
+          ));
+      }
+      break;
+    case 1:
+      exitAlert(context);
+      break;
+  }
+}
+
+
 
 // String? _findNumPlayer(String player, String team) {
 //   int aux = 0;

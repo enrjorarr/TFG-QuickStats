@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:quick_stats/src/pages/menu/organization/Teams/organization_teams.dart';
 import 'package:quick_stats/src/pages/menu/organization/Matchs/organization_games.dart';
 
-import 'Teams/organization_teams.dart';
-import 'Users/organization_users.dart';
-
 String page = "Equipos";
-int index = 1;
+int index = 0;
 
-class OrganizationPage extends StatefulWidget {
+class FavoritePage extends StatefulWidget {
   @override
-  _OrganizationPageState createState() => _OrganizationPageState();
+  _FavoritePageState createState() => _FavoritePageState();
 }
 
-class _OrganizationPageState extends State<OrganizationPage> {
+class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     final Map<String, Object> rcvdData =
         ModalRoute.of(context)!.settings.arguments as Map<String, Object>;
 
     String? org = rcvdData['organization'] as String?;
-    bool owner = rcvdData['owner'] as bool;
 
     final _controller = PageController(
       initialPage: index,
@@ -31,10 +28,7 @@ class _OrganizationPageState extends State<OrganizationPage> {
       setState(() {
         if (index == 0)
           page = "Partidos";
-        else if (index == 1)
-          page = "Equipos";
-        else
-          page = "Usuarios";
+        else if (index == 1) page = "Equipos";
       });
     });
 
@@ -42,26 +36,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(page),
-        actions: [
-          if (owner && page == "Equipos")
-            IconButton(
-              icon: Icon(Icons.group_add),
-              onPressed: () {
-                Navigator.pushNamed(context, "TeamCreate",
-                        arguments: {"organization": org})
-                    .then((value) => setState(() {}));
-              },
-            )
-          else if (owner && page == "Usuarios")
-            IconButton(
-              icon: Icon(Icons.group_add),
-              onPressed: () {
-                Navigator.pushNamed(context, "OrganizationInviteUsers",
-                        arguments: {"organization": org})
-                    .then((value) => setState(() {}));
-              },
-            )
-        ],
       ),
       body: PageView(
         controller: _controller,
@@ -71,9 +45,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
           ),
           OrganizationTeamsPage(
             organization: org,
-          ),
-          OrganizationUsersPage(
-            organization: org,
           )
         ],
       ),
@@ -82,8 +53,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.sports_basketball), label: 'Partidos'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Equipos'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Participantes'),
         ],
         currentIndex: index,
         onTap: (i) {

@@ -16,9 +16,15 @@ class _SearchPageState extends State<SearchPage> {
     super.initState();
     asyncMethod().then((value) {
       partidos = value;
-
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<List<String>> asyncMethod() async {
@@ -34,8 +40,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _crearBotonPeticiones(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return Container(
       child: Column(
         children: [

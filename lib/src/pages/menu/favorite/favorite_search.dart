@@ -1,94 +1,90 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:quick_stats/src/requests/favorite_request.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationInviteUsersPage extends StatefulWidget {
+class FavoriteSearchPage extends StatefulWidget {
   @override
-  _OrganizationInviteUsersPageState createState() =>
-      _OrganizationInviteUsersPageState();
+  _FavoriteSearchPageState createState() => _FavoriteSearchPageState();
 }
 
-class _OrganizationInviteUsersPageState
-    extends State<OrganizationInviteUsersPage> {
-  final emailController = TextEditingController();
+class _FavoriteSearchPageState extends State<FavoriteSearchPage> {
+  final organizationController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  var showCard = false;
 
   @override
   void initState() {
-    emailController.addListener(onListen);
+    organizationController.addListener(onListen);
     super.initState();
   }
 
   @override
   void dispose() {
-    emailController.dispose();
+    organizationController.dispose();
 
     super.dispose();
   }
 
-  void onListen() => setState(() {
-        showCard = false;
-      });
+  void onListen() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
-    final rcvdData = ModalRoute.of(context)!.settings.arguments as Map;
-
-    String? org = rcvdData['organization'] as String?;
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Buscar usuario'),
+        title: Text('Buscar organización'),
       ),
       body: Form(
           key: formKey,
           child: Column(
             children: [
-              _emailFieldWidget(context),
-              _botonInvitarUser(context, org)
-
-              // buildNoAccount(),
+              _organizationFieldWidget(context),
+              _addOrganizationButton(context)
             ],
           )),
     );
   }
 
-  Widget _emailFieldWidget(BuildContext context) {
+  Widget _organizationFieldWidget(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
       padding: EdgeInsets.fromLTRB(size.width * 0.1, size.height * 0.10,
           size.width * 0.1, size.height * 0.05),
       child: TextFormField(
-          controller: emailController,
+          controller: organizationController,
+          maxLength: 80,
           decoration: InputDecoration(
-            hintText: 'Email',
+            hintText: 'Organización',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            prefixIcon: Icon(Icons.mail),
-            suffixIcon: emailController.text.isEmpty
+            prefixIcon: Icon(Icons.people),
+            suffixIcon: organizationController.text.isEmpty
                 ? Container(width: 0)
                 : IconButton(
                     icon: Icon(Icons.close),
                     onPressed: () {
                       setState(() {
-                        emailController.clear();
-                        showCard = false;
+                        organizationController.clear();
                       });
                     },
                   ),
           ),
-          keyboardType: TextInputType.emailAddress,
-          autofillHints: [AutofillHints.email],
-          validator: (email) => email != null && !EmailValidator.validate(email)
-              ? 'Introduzca un email válido'
-              : null),
+          keyboardType: TextInputType.text,
+          validator: (value) {
+            if (value!.isEmpty)
+              return 'El nombre de la organización está vacío';
+            else if (value.length > 80)
+              return 'El nombre de la organización es demasiado largo';
+            else if (value
+                .contains(RegExp(r'[^a-zA-ZáéíóúÁÉÍÓÚ\s\u00f1\u00d1]')))
+              return 'El nombre de la organización no es válido';
+            else
+              return null;
+          }),
     );
   }
 
-  Widget _botonInvitarUser(BuildContext context, String? org) {
+  Widget _addOrganizationButton(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return ElevatedButton(
@@ -96,7 +92,7 @@ class _OrganizationInviteUsersPageState
           padding: EdgeInsets.symmetric(
               horizontal: size.width * 0.1, vertical: size.height * 0.015),
           child: Text(
-            'Añadir usuario',
+            'Añadir organización',
           ),
         ),
         style: ElevatedButton.styleFrom(
@@ -113,36 +109,36 @@ class _OrganizationInviteUsersPageState
         ),
         onPressed: () async {
           final form = formKey.currentState!;
-          showCard = false;
 
           if (form.validate()) {
-            List<String?> usuariosOrg = await getEmails(org!);
-            List<String> usuariosTodos = await getAllEmails();
+            List<String?> organizationFavs = await getFavoriteOrganizations();
+            List<String> allOrganizations = await getAllOrganizationNames();
 
-            var set1 = Set.from(usuariosOrg);
-            var set2 = Set.from(usuariosTodos);
+            var set1 = Set.from(organizationFavs);
+            var set2 = Set.from(allOrganizations);
 
             if (List.from(set2.difference(set1))
-                .contains(emailController.text)) {
-              if (await inviteUser(emailController.text, org)) {
+                .contains(organizationController.text)) {
+              if (await addOrganiztionFav(organizationController.text)) {
                 ScaffoldMessenger.of(context)
                   ..removeCurrentSnackBar()
                   ..showSnackBar(SnackBar(
                     content: Text(
-                      'La invitación ha sido enviada',
+                      'La organización se ha añadido correctamente',
                       textAlign: TextAlign.center,
                     ),
                   ));
+
+                setState(() {
+                  Navigator.pop(context);
+                });
               }
-              setState(() {
-                Navigator.pop(context);
-              });
             } else {
               ScaffoldMessenger.of(context)
                 ..removeCurrentSnackBar()
                 ..showSnackBar(SnackBar(
                   content: Text(
-                    'El usuario no existe o ya participa en la organización',
+                    'La organización no existe o ya se encuentra en ella',
                     textAlign: TextAlign.center,
                   ),
                 ));

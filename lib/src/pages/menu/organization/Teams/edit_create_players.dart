@@ -72,6 +72,8 @@ class _EditCreatePlayersPageState extends State<EditCreatePlayersPage> {
           child: Column(
             children: [
               _playerFieldWidget(context),
+              Text('Número del jugador',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               _playerNumberWidget(context),
               SizedBox(
                 height: 30,
@@ -205,6 +207,7 @@ class _EditCreatePlayersPageState extends State<EditCreatePlayersPage> {
                           textAlign: TextAlign.center,
                         ),
                       ));
+                    Navigator.pop(context);
                   });
                 }
               }

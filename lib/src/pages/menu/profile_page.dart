@@ -5,28 +5,25 @@ import 'package:provider/provider.dart';
 
 import 'package:quick_stats/src/auth/authenticationProvider.dart';
 
-const KLargeTextStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.bold);
-const KTitleTextStyle =
-    TextStyle(fontSize: 16, color: Color.fromRGBO(129, 156, 168, 1));
-
 class ProfilePage extends StatelessWidget {
-  //Firebase
   final referenceDatabase = FirebaseDatabase.instance.reference();
   final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.fromLTRB(15, 65, 15, 15),
+          padding: EdgeInsets.fromLTRB(15, 40, 15, 15),
           child: Column(
             children: [
               Center(
                 child: Container(
-                  width: 120,
-                  height: 120,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
@@ -36,19 +33,21 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: size.height * 0.04),
               Text(
                 user!.displayName!,
-                style: KLargeTextStyle,
+                style: TextStyle(
+                    fontSize: size.height * 0.026, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: size.height * 0.03),
               Text(
                 user!.email!,
-                style: KLargeTextStyle,
+                style: TextStyle(
+                    fontSize: size.height * 0.026, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: size.height * 0.20),
               _crearBotonPeticiones(context),
-              SizedBox(height: 60),
+              SizedBox(height: size.height * 0.02),
               _crearBotonLogout(context)
             ],
           ),

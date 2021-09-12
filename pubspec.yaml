@@ -39,6 +39,7 @@ dependencies:
   firebase_auth: ^3.0.2
   google_sign_in: ^5.0.7
   numberpicker: ^2.1.1
+  awesome_dialog: ^2.1.1
 
 
 

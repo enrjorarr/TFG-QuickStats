@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
@@ -86,11 +87,60 @@ class _OrganizationPageState extends State<OrganizationPage> {
             },
             onLongPress: () async {
               if (await getOwner(organization)) {
-                createAlertDialog(context, organization);
+                if (await containsTeamOrUser(organization)) {
+                  ScaffoldMessenger.of(context)
+                    ..removeCurrentSnackBar()
+                    ..showSnackBar(SnackBar(
+                      content: Text(
+                        'No puede eliminarse una organización con equipos o usuarios',
+                        textAlign: TextAlign.center,
+                      ),
+                    ));
+                } else {
+                  deleteAlert(context, organization);
+                }
+              } else {
+                exitAlert(context, organization);
               }
             },
           )),
     );
+  }
+
+  exitAlert(BuildContext context, String organization) {
+    return AwesomeDialog(
+        context: context,
+        dialogType: DialogType.QUESTION,
+        animType: AnimType.BOTTOMSLIDE,
+        title: organization,
+        desc: '¿Deseas abandonar esta organización?',
+        btnOkText: 'Aceptar',
+        btnCancelText: 'Cancelar',
+        btnCancelOnPress: () {},
+        btnOkOnPress: () async {
+          leaveOrganization(organization).then((value) {
+            setState(() {});
+          });
+        })
+      ..show();
+  }
+
+  deleteAlert(BuildContext context, String organization) {
+    return AwesomeDialog(
+        context: context,
+        dialogType: DialogType.QUESTION,
+        animType: AnimType.BOTTOMSLIDE,
+        title: organization,
+        desc: '¿Deseas eliminar esta organización?',
+        btnOkText: 'Aceptar',
+        btnCancelText: 'Cancelar',
+        btnCancelOnPress: () {},
+        btnOkOnPress: () async {
+          deleteOrganizations(organization).then((value) {
+            setState(() {});
+          });
+        })
+      ..show();
   }
 
   createAlertDialog(BuildContext context, String organization) {
@@ -123,7 +173,6 @@ class _OrganizationPageState extends State<OrganizationPage> {
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      setState(() {});
                     },
                     child: Text(
                       "No",

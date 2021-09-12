@@ -1,17 +1,30 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
-class OrganizationUsersPage extends StatelessWidget {
+const KLargeTextStyle =
+    TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black);
+const KTitleTextStyle =
+    TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black);
+final User? currentUser = FirebaseAuth.instance.currentUser;
+
+class OrganizationUsersPage extends StatefulWidget {
   final String? organization;
 
   const OrganizationUsersPage({Key? key, this.organization}) : super(key: key);
 
   @override
+  _OrganizationUsersPageState createState() => _OrganizationUsersPageState();
+}
+
+class _OrganizationUsersPageState extends State<OrganizationUsersPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getEmails(organization!),
+        future: getEmails(widget.organization!),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -25,10 +38,11 @@ class OrganizationUsersPage extends StatelessWidget {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  final organization = snapshot.data[index];
+                  final user = snapshot.data[index];
                   return FadeInRight(
                     delay: Duration(milliseconds: 100 * index),
-                    child: listaOrganizaciones(context, organization),
+                    child: listaOrganizaciones(
+                        context, widget.organization!, user),
                   );
                 },
               );
@@ -47,7 +61,7 @@ class OrganizationUsersPage extends StatelessWidget {
     );
   }
 
-  Widget listaOrganizaciones(BuildContext context, String organization) {
+  Widget listaOrganizaciones(BuildContext context, String org, String user) {
     return Card(
       elevation: 5.0,
       margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -64,7 +78,7 @@ class OrganizationUsersPage extends StatelessWidget {
               child: Icon(Icons.people, color: Colors.white),
             ),
             title: Text(
-              organization,
+              user,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -72,20 +86,115 @@ class OrganizationUsersPage extends StatelessWidget {
             ),
             trailing: Icon(Icons.keyboard_arrow_right,
                 color: Colors.white, size: 30.0),
-            onTap: () {
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => OrganizationGamesPage(
-              //         organization: organization,
-              //       ),
-              //     ));
-              Navigator.pushNamed(context, "OrganizationGames",
-                  arguments: {"organization": organization});
-
-              // Navigator.of(context).pushNamed('OrganizationGames');
+            onTap: () {},
+            onLongPress: () async {
+              if (await getOwner(org)) {
+                if (user != currentUser!.email)
+                  createAlertDialog(context, org, user);
+                else {
+                  ScaffoldMessenger.of(context)
+                    ..removeCurrentSnackBar()
+                    ..showSnackBar(SnackBar(
+                      content: Text(
+                        'El propetario de la organización no puede ser eliminado',
+                        textAlign: TextAlign.center,
+                      ),
+                    ));
+                }
+              }
             },
           )),
     );
+  }
+
+  createAlertDialog(BuildContext context, String org, String user) {
+    return AwesomeDialog(
+        context: context,
+        dialogType: DialogType.QUESTION,
+        animType: AnimType.BOTTOMSLIDE,
+        title: user,
+        desc: '¿Deseas eliminar a este usuario de la organización?',
+        btnOkText: 'Aceptar',
+        btnCancelText: 'Cancelar',
+        btnCancelOnPress: () {},
+        btnOkOnPress: () async {
+          if (await deleteUsers(org, user)) {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(
+                  'Se ha eliminado el usuario correctamente',
+                  textAlign: TextAlign.center,
+                ),
+              ));
+          } else {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(
+                  'Ha ocurrido un error elminando al usuario',
+                  textAlign: TextAlign.center,
+                ),
+              ));
+          }
+          setState(() {});
+        })
+      ..show();
+
+    // showDialog(
+    //     context: context,
+    //     builder: (context) => AlertDialog(
+    //           title: Text(
+    //             user,
+    //             style: KLargeTextStyle,
+    //           ),
+    //           content: Text(
+    //             "¿Quieres eliminar este usuario?",
+    //             style: KTitleTextStyle,
+    //           ),
+    //           elevation: 15,
+    //           backgroundColor: Color.fromRGBO(255, 203, 119, 1),
+    //           shape: RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.circular(15)),
+    //           actions: [
+    //             TextButton(
+    //                 onPressed: () async {
+    //                   if (await deleteUsers(org, user)) {
+    //                     Navigator.pop(context);
+    //                     ScaffoldMessenger.of(context)
+    //                       ..removeCurrentSnackBar()
+    //                       ..showSnackBar(SnackBar(
+    //                         content: Text(
+    //                           'Se ha eliminado el usuario correctamente',
+    //                           textAlign: TextAlign.center,
+    //                         ),
+    //                       ));
+    //                   } else {
+    //                     ScaffoldMessenger.of(context)
+    //                       ..removeCurrentSnackBar()
+    //                       ..showSnackBar(SnackBar(
+    //                         content: Text(
+    //                           'Ha ocurrido un error elminando al usuario',
+    //                           textAlign: TextAlign.center,
+    //                         ),
+    //                       ));
+    //                   }
+    //                   setState(() {});
+    //                 },
+    //                 child: Text(
+    //                   "Si",
+    //                   style: KLargeTextStyle,
+    //                 )),
+    //             TextButton(
+    //                 onPressed: () {
+    //                   Navigator.pop(context);
+    //                   setState(() {});
+    //                 },
+    //                 child: Text(
+    //                   "No",
+    //                   style: KLargeTextStyle,
+    //                 ))
+    //           ],
+    //         ));
   }
 }

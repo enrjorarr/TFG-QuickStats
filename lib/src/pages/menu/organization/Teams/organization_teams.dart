@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:quick_stats/src/requests/organization_request.dart';
 
@@ -96,60 +97,37 @@ class _OrganizationTeamsPageState extends State<OrganizationTeamsPage> {
   }
 
   createAlertDialog(BuildContext context, String? organization, String team) {
-    return showDialog(
+    return AwesomeDialog(
         context: context,
-        builder: (context) => AlertDialog(
-              title: Text(
-                team,
-                style: KLargeTextStyle,
-              ),
-              content: Text(
-                "¿Quieres eliminar este equipo?",
-                style: KTitleTextStyle,
-              ),
-              elevation: 15,
-              backgroundColor: Color.fromRGBO(255, 203, 119, 1),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              actions: [
-                TextButton(
-                    onPressed: () async {
-                      if (await deleteTeam(organization!, team)) {
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context)
-                          ..removeCurrentSnackBar()
-                          ..showSnackBar(SnackBar(
-                            content: Text(
-                              'Se ha eliminado el equipo correctamente',
-                              textAlign: TextAlign.center,
-                            ),
-                          ));
-                      } else {
-                        ScaffoldMessenger.of(context)
-                          ..removeCurrentSnackBar()
-                          ..showSnackBar(SnackBar(
-                            content: Text(
-                              'Ha ocurrido un error elminando el equipo',
-                              textAlign: TextAlign.center,
-                            ),
-                          ));
-                      }
-                      setState(() {});
-                    },
-                    child: Text(
-                      "Si",
-                      style: KLargeTextStyle,
-                    )),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      setState(() {});
-                    },
-                    child: Text(
-                      "No",
-                      style: KLargeTextStyle,
-                    ))
-              ],
-            ));
+        dialogType: DialogType.QUESTION,
+        animType: AnimType.BOTTOMSLIDE,
+        title: team,
+        desc: '¿Deseas eliminar este equipo?',
+        btnOkText: 'Aceptar',
+        btnCancelText: 'Cancelar',
+        btnCancelOnPress: () {},
+        btnOkOnPress: () async {
+          if (await deleteTeam(organization!, team)) {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(
+                  'Se ha eliminado el equipo correctamente',
+                  textAlign: TextAlign.center,
+                ),
+              ));
+          } else {
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(
+                  'Ha ocurrido un error elminando el equipo',
+                  textAlign: TextAlign.center,
+                ),
+              ));
+          }
+          setState(() {});
+        })
+      ..show();
   }
 }

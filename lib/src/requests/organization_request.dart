@@ -7,18 +7,22 @@ final User? user = FirebaseAuth.instance.currentUser;
 
 Future<List<String>> getOrganizations() async {
   List<String> organizationNames = [];
-
-  await referenceDatabase
-      .child('Users')
-      .child(user!.uid)
-      .child('ParticipatingOrganizations')
-      .once()
-      .then((DataSnapshot snapshot) {
-    Map<dynamic, dynamic> values = snapshot.value;
-    values.forEach((key, value) {
-      organizationNames.add(key);
+  try {
+    await referenceDatabase
+        .child('Users')
+        .child(user!.uid)
+        .child('ParticipatingOrganizations')
+        .once()
+        .then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        organizationNames.add(key);
+      });
     });
-  });
+  } catch (e) {
+    print(e);
+  }
+
   return organizationNames;
 }
 
@@ -111,11 +115,13 @@ Future<List<String>> getAllTeamNames() async {
 Future<bool> addTeam(String team, String org) async {
   bool checkTeam = false;
   try {
-    await referenceDatabase
-        .child('Teams')
-        .child(team)
-        .child('0')
-        .set('Usuario de ejemplo / 0');
+    for (int i = 0; i < 12; i++) {
+      await referenceDatabase
+          .child('Teams')
+          .child(team)
+          .child('$i')
+          .set('Usuario / $i');
+    }
 
     await referenceDatabase
         .child('Organizations')
@@ -469,15 +475,51 @@ Future<bool> getOwner(String org) async {
   return owner;
 }
 
+Future<List<String>> getFavUsers(String org) async {
+  List<String> favUsers = [];
+  try {
+    await referenceDatabase
+        .child('Organizations')
+        .child(org)
+        .child('Favorites')
+        .once()
+        .then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+      values.forEach((key, value) {
+        favUsers.add(key);
+      });
+    });
+  } catch (e) {
+    print(e);
+  }
+
+  return favUsers;
+}
+
 Future<void> deleteOrganizations(String organization) async {
+  List<String> favUsers = await getFavUsers(organization);
+
+  favUsers.forEach((element) async {
+    await referenceDatabase
+        .child('Users')
+        .child(element)
+        .child('FavoriteOrganizations')
+        .child(organization)
+        .remove();
+  });
+
+  await leaveOrganization(organization);
+
+  await referenceDatabase.child('Organizations').child(organization).remove();
+}
+
+Future<void> leaveOrganization(String organization) async {
   await referenceDatabase
       .child('Users')
       .child(user!.uid)
       .child('ParticipatingOrganizations')
       .child(organization)
       .remove();
-
-  await referenceDatabase.child('Organizations').child(organization).remove();
 }
 
 Future<bool> deleteTeam(String org, String team) async {
@@ -501,6 +543,38 @@ Future<bool> deleteTeam(String org, String team) async {
   return checkDeleteTeam;
 }
 
+Future<bool> deleteMatch(String org, String match) async {
+  bool checkDeleteMatch = false;
+
+  try {
+    await referenceDatabase
+        .child('Organizations')
+        .child(org)
+        .child('Matches')
+        .child(match)
+        .remove();
+
+    checkDeleteMatch = true;
+  } catch (e) {
+    print(e);
+  }
+
+  return checkDeleteMatch;
+}
+
+Future<bool> containsTeamOrUser(String org) async {
+  bool checkTeamOrUser = false;
+
+  List<String> teams = await getTeams(org);
+  List<String> users = await getUsers(org);
+
+  if (teams.isNotEmpty || users.length > 1) {
+    checkTeamOrUser = true;
+  }
+
+  return checkTeamOrUser;
+}
+
 Future<bool> deletePlayer(String team, String player) async {
   bool checkPlayer = false;
   int numPlayer;
@@ -518,4 +592,32 @@ Future<bool> deletePlayer(String team, String player) async {
   }
 
   return checkPlayer;
+}
+
+Future<bool> deleteUsers(String org, String email) async {
+  bool checkDeleteUser = false;
+
+  String userId = await checkEmail(email);
+
+  try {
+    await referenceDatabase
+        .child('Organizations')
+        .child(org)
+        .child('Users')
+        .child(userId)
+        .remove();
+
+    await referenceDatabase
+        .child('Users')
+        .child(userId)
+        .child('ParticipatingOrganizations')
+        .child(org)
+        .remove();
+
+    checkDeleteUser = true;
+  } catch (e) {
+    print(e);
+  }
+
+  return checkDeleteUser;
 }

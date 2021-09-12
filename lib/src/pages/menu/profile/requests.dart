@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -108,45 +109,24 @@ class _RequestsPageState extends State<RequestsPage> {
   }
 
   createAlertDialog(BuildContext context, String organization) {
-    return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text(
-                organization,
-                style: KLargeTextStyle,
-              ),
-              content: Text(
-                "¿Te gustaría unirte a esta organización?",
-                style: KTitleTextStyle,
-              ),
-              elevation: 15,
-              backgroundColor: Color.fromRGBO(255, 203, 119, 1),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      acceptOrganizations(organization);
-                      rejectOrganizations(organization);
-                      Navigator.pop(context);
-                      setState(() {});
-                    },
-                    child: Text(
-                      "Si",
-                      style: KLargeTextStyle,
-                    )),
-                TextButton(
-                    onPressed: () {
-                      rejectOrganizations(organization);
-                      Navigator.pop(context);
-                      setState(() {});
-                    },
-                    child: Text(
-                      "No",
-                      style: KLargeTextStyle,
-                    ))
-              ],
-            ));
+    return AwesomeDialog(
+      context: context,
+      dialogType: DialogType.QUESTION,
+      animType: AnimType.BOTTOMSLIDE,
+      title: organization,
+      desc: '¿Te gustaría unirte a esta organización?',
+      btnOkText: 'Aceptar',
+      btnCancelText: 'Rechazar',
+      btnCancelOnPress: () {
+        rejectOrganizations(organization);
+        setState(() {});
+      },
+      btnOkOnPress: () async {
+        acceptOrganizations(organization);
+        rejectOrganizations(organization);
+        setState(() {});
+      },
+    )..show();
   }
 
   Widget _crearBotonPeticiones(BuildContext context) {

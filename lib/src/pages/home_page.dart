@@ -77,19 +77,4 @@ class HomePage extends StatelessWidget {
           context.read<AuthenticationProvider>().signOutGoogle();
         });
   }
-
-  _crearBoton(BuildContext context) {
-    return FloatingActionButton(
-        child: Icon(Icons.add),
-        backgroundColor: Colors.deepOrange,
-        onPressed: () {
-          // addData(textController.text, context);
-        });
-  }
-
-  // void addData(String data, context) {
-  //   organization.nombre = data;
-  //   organization.apellido = 'perez';
-  //   organization.numero = '21';
-  // }
 }
