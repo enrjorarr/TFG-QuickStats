@@ -8,12 +8,12 @@ class AuthenticationProvider {
   final FirebaseAuth firebaseAuth;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-// FirebaseAuth instance
+// Instancia de Firebase
 
   AuthenticationProvider(this.firebaseAuth);
-//Constructor to initialize the Firebase Auth instance.
+//Constructor para incicializar la instancia de Firebase
 
-  //Using Stream to listen to Authentication State
+  //Usamos Stream para guardar el estado de la autenticación
   Stream<User?> get authState => firebaseAuth.idTokenChanges();
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
