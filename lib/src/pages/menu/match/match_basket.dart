@@ -60,8 +60,8 @@ class MatchBasketPage extends StatefulWidget {
 
 class MatchBasketPageState extends State<MatchBasketPage>
     with WidgetsBindingObserver {
-  static const maxSeconds = 10;
-  static const maxMinutes = 2;
+  static const maxSeconds = 59;
+  static const maxMinutes = 10;
   int seconds = 00;
   int minutes = maxMinutes;
   int periodo = 1;
@@ -185,202 +185,194 @@ class MatchBasketPageState extends State<MatchBasketPage>
               ),
             ),
           )
-        : Stack(children: [
-            SizedBox.expand(
-              child: Image.asset(
-                'assets/fondoPartido.png',
-                fit: BoxFit.fill,
-              ),
-            ),
-            Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                actions: [
-                  PopupMenuButton<int>(
-                    elevation: 7,
-                    color: Colors.deepOrange,
-                    onSelected: (item) => onSelected(context, item),
-                    itemBuilder: (context) => [
-                      PopupMenuItem<int>(
-                        value: 0,
-                        child: Row(
-                          children: [
-                            Icon(Icons.save_alt),
-                            const SizedBox(width: 8),
-                            Text('Guardar',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: size.height * 0.018,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
+        : Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              actions: [
+                PopupMenuButton<int>(
+                  elevation: 7,
+                  color: Colors.deepOrange,
+                  onSelected: (item) => onSelected(context, item),
+                  itemBuilder: (context) => [
+                    PopupMenuItem<int>(
+                      value: 0,
+                      child: Row(
+                        children: [
+                          Icon(Icons.save_alt),
+                          const SizedBox(width: 8),
+                          Text('Guardar',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.height * 0.018,
+                                  fontWeight: FontWeight.bold)),
+                        ],
                       ),
-                      PopupMenuItem<int>(
-                        value: 1,
-                        child: Row(
-                          children: [
-                            Icon(Icons.exit_to_app),
-                            const SizedBox(width: 8),
-                            Text('Salir',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: size.height * 0.018,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 1,
+                      child: Row(
+                        children: [
+                          Icon(Icons.exit_to_app),
+                          const SizedBox(width: 8),
+                          Text('Salir',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.height * 0.018,
+                                  fontWeight: FontWeight.bold)),
+                        ],
                       ),
-                    ],
-                  ),
-
-                  // IconButton(
-                  //     onPressed: () async {
-                  //       if (await checkPeriodAndtime('$local - $visitor')) {
-                  //         if (await addMatchToOrganization(
-                  //             local, visitor, organization!)) {
-                  //           deleteLiveMatch('$local - $visitor');
-                  //         }
-                  //       } else {
-                  //         ScaffoldMessenger.of(context)
-                  //           ..removeCurrentSnackBar()
-                  //           ..showSnackBar(SnackBar(
-                  //             content: Text(
-                  //               'El partido aún no ha finalizado',
-                  //               textAlign: TextAlign.center,
-                  //             ),
-                  //           ));
-                  //       }
-                  //     },
-                  //     icon: Icon(Icons.save))
-                ],
-                centerTitle: true,
-                title: Text("$local - $visitor",
-                    style: TextStyle(
-                        fontSize: size.height * 0.026,
-                        fontWeight: FontWeight.bold)),
-              ),
-              body: Container(
-                  // decoration: BoxDecoration(
-                  //     image: DecorationImage(
-                  //         scale: size.aspectRatio,
-                  //         image: AssetImage("assets/fondoPartido.png"),
-                  //         fit: BoxFit.cover)),
-                  child: Center(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: size.height * 0.001,
-                    ),
-                    // PIVOTS
-                    Row(
-                      children: [
-                        Spacer(),
-                        _botonjugadorPivot1Local(context, size),
-                        Spacer(
-                          flex: 2,
-                        ),
-                        _botonjugadorPivot2Local(context, size),
-                        Spacer()
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.07,
-                    ),
-                    // ALEROS
-                    Row(
-                      children: [
-                        Spacer(),
-                        _botonjugadorAlero1Local(context, size),
-                        Spacer(
-                          flex: 4,
-                        ),
-                        _botonjugadorAlero2Local(context, size),
-                        Spacer()
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.045,
-                    ),
-                    // BASE
-                    Row(
-                      children: [
-                        Expanded(child: _botonjugadorBaseLocal(context, size))
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.023,
-                    ),
-                    Row(
-                      children: [
-                        Spacer(),
-                        Column(
-                          children: [
-                            Text(local!),
-                            Text(localPoints.toString()),
-                          ],
-                        ),
-                        Spacer(),
-                        Column(
-                          children: [
-                            _buildTimer(context, size, local!, visitor!),
-                            Text('Periodo $periodo')
-                          ],
-                        ),
-                        Spacer(),
-                        Column(
-                          children: [
-                            Text(visitor!),
-                            Text(visitorPoints.toString()),
-                          ],
-                        ),
-                        Spacer(),
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.043,
-                    ),
-                    // BASE
-                    Row(
-                      children: [
-                        Expanded(
-                            child: _botonjugadorBaseVisitante(context, size))
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.0,
-                    ),
-                    // ALEROS
-                    Row(
-                      children: [
-                        Spacer(),
-                        _botonjugadorAlero1Visitante(context, size),
-                        Spacer(
-                          flex: 4,
-                        ),
-                        _botonjugadorAlero2Visitante(context, size),
-                        Spacer()
-                      ],
-                    ),
-                    SizedBox(
-                      height: size.height * 0.07,
-                    ),
-
-                    // PIVOTS
-                    Row(
-                      children: [
-                        Spacer(),
-                        _botonjugadorPivot1Visitante(context, size),
-                        Spacer(
-                          flex: 2,
-                        ),
-                        _botonjugadorPivot2Visitante(context, size),
-                        Spacer()
-                      ],
                     ),
                   ],
                 ),
-              )),
+
+                // IconButton(
+                //     onPressed: () async {
+                //       if (await checkPeriodAndtime('$local - $visitor')) {
+                //         if (await addMatchToOrganization(
+                //             local, visitor, organization!)) {
+                //           deleteLiveMatch('$local - $visitor');
+                //         }
+                //       } else {
+                //         ScaffoldMessenger.of(context)
+                //           ..removeCurrentSnackBar()
+                //           ..showSnackBar(SnackBar(
+                //             content: Text(
+                //               'El partido aún no ha finalizado',
+                //               textAlign: TextAlign.center,
+                //             ),
+                //           ));
+                //       }
+                //     },
+                //     icon: Icon(Icons.save))
+              ],
+              centerTitle: true,
+              title: Text("$local - $visitor",
+                  style: TextStyle(
+                      fontSize: size.height * 0.026,
+                      fontWeight: FontWeight.bold)),
             ),
-          ]);
+            body: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        scale: size.aspectRatio,
+                        image: AssetImage("assets/fondoPartido.png"),
+                        fit: BoxFit.cover)),
+                child: Center(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: size.height * 0.1,
+                      ),
+                      // PIVOTS
+                      Row(
+                        children: [
+                          Spacer(),
+                          _botonjugadorPivot1Local(context, size),
+                          Spacer(
+                            flex: 2,
+                          ),
+                          _botonjugadorPivot2Local(context, size),
+                          Spacer()
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
+                      // ALEROS
+                      Row(
+                        children: [
+                          Spacer(),
+                          _botonjugadorAlero1Local(context, size),
+                          Spacer(
+                            flex: 4,
+                          ),
+                          _botonjugadorAlero2Local(context, size),
+                          Spacer()
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
+                      // BASE
+                      Row(
+                        children: [
+                          Expanded(child: _botonjugadorBaseLocal(context, size))
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.02,
+                      ),
+                      Row(
+                        children: [
+                          Spacer(),
+                          Column(
+                            children: [
+                              Text(local!),
+                              Text(localPoints.toString()),
+                            ],
+                          ),
+                          Spacer(),
+                          Column(
+                            children: [
+                              _buildTimer(context, size, local!, visitor!),
+                              Text('Periodo $periodo')
+                            ],
+                          ),
+                          Spacer(),
+                          Column(
+                            children: [
+                              Text(visitor!),
+                              Text(visitorPoints.toString()),
+                            ],
+                          ),
+                          Spacer(),
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.03,
+                      ),
+                      // BASE
+                      Row(
+                        children: [
+                          Expanded(
+                              child: _botonjugadorBaseVisitante(context, size))
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.015,
+                      ),
+                      // ALEROS
+                      Row(
+                        children: [
+                          Spacer(),
+                          _botonjugadorAlero1Visitante(context, size),
+                          Spacer(
+                            flex: 4,
+                          ),
+                          _botonjugadorAlero2Visitante(context, size),
+                          Spacer()
+                        ],
+                      ),
+                      SizedBox(
+                        height: size.height * 0.05,
+                      ),
+
+                      // PIVOTS
+                      Row(
+                        children: [
+                          Spacer(),
+                          _botonjugadorPivot1Visitante(context, size),
+                          Spacer(
+                            flex: 2,
+                          ),
+                          _botonjugadorPivot2Visitante(context, size),
+                          Spacer()
+                        ],
+                      ),
+                    ],
+                  ),
+                )),
+          );
   }
 
   Widget _buildTimer(
@@ -409,7 +401,7 @@ class MatchBasketPageState extends State<MatchBasketPage>
         style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
-            fontSize: size.height * 0.03),
+            fontSize: size.height * 0.02),
       ),
       style: OutlinedButton.styleFrom(
         fixedSize: size,
@@ -722,7 +714,7 @@ class MatchBasketPageState extends State<MatchBasketPage>
           },
         ),
         ListTile(
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.arrow_forward),
           title: Text('Pasar de cuarto'),
           onTap: () async {
             addPeriod();
@@ -844,7 +836,7 @@ class MatchBasketPageState extends State<MatchBasketPage>
           },
         ),
         ListTile(
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.flip_camera_android_rounded),
           title: Text('Rebote'),
           onTap: () async {
             int aux = 0;
@@ -872,7 +864,7 @@ class MatchBasketPageState extends State<MatchBasketPage>
           },
         ),
         ListTile(
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.connect_without_contact),
           title: Text('Asistencia'),
           onTap: () async {
             int aux = 0;
@@ -898,7 +890,7 @@ class MatchBasketPageState extends State<MatchBasketPage>
           },
         ),
         ListTile(
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.do_not_touch),
           title: Text('Falta'),
           onTap: () async {
             int aux = 0;
@@ -955,7 +947,7 @@ class MatchBasketPageState extends State<MatchBasketPage>
     if (team == 'local') {
       for (var item in localBench) {
         childs.add(new ListTile(
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.person),
           title: Text(item!),
           onTap: () {
             setState(() {
@@ -976,7 +968,7 @@ class MatchBasketPageState extends State<MatchBasketPage>
     } else {
       for (var item in visitorBench) {
         childs.add(new ListTile(
-          leading: Icon(Icons.ac_unit),
+          leading: Icon(Icons.person),
           title: Text(item!),
           onTap: () {
             setState(() {

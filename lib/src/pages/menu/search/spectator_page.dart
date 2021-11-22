@@ -182,7 +182,7 @@ class SpectatorPageState extends State<SpectatorPage> {
                   child: Column(
                     children: [
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: size.height * 0.1,
                       ),
                       // PIVOTS
                       Row(
@@ -216,7 +216,7 @@ class SpectatorPageState extends State<SpectatorPage> {
                         ],
                       ),
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: size.height * 0.05,
                       ),
                       // BASE
                       Row(
@@ -262,7 +262,7 @@ class SpectatorPageState extends State<SpectatorPage> {
                         ],
                       ),
                       SizedBox(
-                        height: size.height * 0.05,
+                        height: size.height * 0.06,
                       ),
                       // BASE
                       Row(
@@ -279,7 +279,7 @@ class SpectatorPageState extends State<SpectatorPage> {
                         ],
                       ),
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: size.height * 0.05,
                       ),
                       // ALEROS
                       Row(

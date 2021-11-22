@@ -76,7 +76,7 @@ class _OrganizationGamesPageState extends State<OrganizationGamesPage> {
               child: Icon(Icons.people, color: Colors.white),
             ),
             title: Text(
-              match,
+              partido,
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,

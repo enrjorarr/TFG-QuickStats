@@ -141,7 +141,7 @@ class OrganizationMatchPageState extends State<OrganizationMatchPage> {
                   child: Column(
                     children: [
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: size.height * 0.1,
                       ),
                       // PIVOTS
                       Row(
@@ -175,7 +175,7 @@ class OrganizationMatchPageState extends State<OrganizationMatchPage> {
                         ],
                       ),
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: size.height * 0.05,
                       ),
                       // BASE
                       Row(
@@ -195,33 +195,34 @@ class OrganizationMatchPageState extends State<OrganizationMatchPage> {
                         height: size.height * 0.045,
                       ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Spacer(),
+                          // Spacer(),
                           Column(
                             children: [
                               Text(local!),
                               Text(localPoints.toString()),
                             ],
                           ),
-                          Spacer(),
+                          // Spacer(),
                           Column(
                             children: [
                               Text('$tiempo'),
                               Text('Periodo $periodo')
                             ],
                           ),
-                          Spacer(),
+                          //  Spacer(),
                           Column(
                             children: [
                               Text(visitor!),
                               Text(visitorPoints.toString()),
                             ],
                           ),
-                          Spacer(),
+                          // Spacer(),
                         ],
                       ),
                       SizedBox(
-                        height: size.height * 0.05,
+                        height: size.height * 0.06,
                       ),
                       // BASE
                       Row(
@@ -238,7 +239,7 @@ class OrganizationMatchPageState extends State<OrganizationMatchPage> {
                         ],
                       ),
                       SizedBox(
-                        height: size.height * 0.03,
+                        height: size.height * 0.05,
                       ),
                       // ALEROS
                       Row(

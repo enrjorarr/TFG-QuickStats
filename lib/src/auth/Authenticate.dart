@@ -7,14 +7,14 @@ import 'package:quick_stats/src/pages/prueba_login.dart';
 class Authenticate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //Instance to know the authentication state.
+    //Instancia para conocer el estado del autenticador.
     final firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
-      //Means that the user is logged in already and hence navigate to HomePage
+      //Si el usuario está logeado, se redirige al menú principal.
       return MenuPage();
     }
-    //The user isn't logged in and hence navigate to SignInPage.
+    //Si el usuario no está logead, le redirige a la pantalla de login.
     return PruebaLoginPage();
   }
 }
