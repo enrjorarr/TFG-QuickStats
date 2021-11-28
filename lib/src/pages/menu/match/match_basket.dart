@@ -1057,6 +1057,12 @@ saveAlert(BuildContext context) {
     btnOkOnPress: () async {
       if (await addMatchToOrganization(local, visitor, organization!)) {
         if (await deleteLiveMatch('$local - $visitor')) {
+          localTeam = [];
+          localBench = [];
+          localPlaying = [];
+          visitorTeam = [];
+          visitorBench = [];
+          visitorPlaying = [];
           isLoading = true;
           Navigator.pushReplacementNamed(context, 'Menu');
         }
@@ -1078,6 +1084,12 @@ exitAlert(BuildContext context) {
       btnCancelOnPress: () {},
       btnOkOnPress: () async {
         if (await deleteLiveMatch('$local - $visitor')) {
+          localTeam = [];
+          localBench = [];
+          localPlaying = [];
+          visitorTeam = [];
+          visitorBench = [];
+          visitorPlaying = [];
           isLoading = true;
           Navigator.pushReplacementNamed(context, 'Menu');
         } else {
